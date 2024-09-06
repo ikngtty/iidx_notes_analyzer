@@ -1,5 +1,5 @@
 from collections import Counter
-from itertools import groupby
+from itertools import combinations, groupby
 import json
 import os
 
@@ -34,8 +34,14 @@ def chord_to_str(chord):
 notes = load()
 chords = to_chords(notes)
 chord_counts = Counter(chords)
-for chord in range(1, 1 << 8):
-    count = chord_counts[chord]
-    if count > 0:
-        chord_str = chord_to_str(chord)
-        print(f'{chord_str}:{count}')
+for has_scratch in [False, True]:
+    for note_count_in_chord in range(1, 8):
+        for keys in combinations(range(1, 8), note_count_in_chord):
+            chord = int(has_scratch)
+            for key in keys:
+                chord |= 1 << key
+
+            count = chord_counts[chord]
+            if count > 0:
+                chord_str = chord_to_str(chord)
+                print(f'{chord_str}:{count}')
