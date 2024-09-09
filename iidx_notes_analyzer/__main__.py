@@ -1,6 +1,6 @@
 import argparse
 
-from .main import analyze, scrape
+from .main import analyze, scrape_score
 
 arg_parser = argparse.ArgumentParser(prog='iidx_notes_analyzer')
 sub_command_parser = arg_parser.add_subparsers(
@@ -8,13 +8,13 @@ sub_command_parser = arg_parser.add_subparsers(
     dest='subcommand',
     required=True,
 )
-arg_parser_for_scrape = sub_command_parser.add_parser('scrape')
+arg_parser_for_scrape_score = sub_command_parser.add_parser('scrape_score')
 arg_parser_for_analyze = sub_command_parser.add_parser('analyze')
 
 args = arg_parser.parse_args()
 match args.subcommand:
-    case 'scrape':
-        scrape()
+    case 'scrape_score':
+        scrape_score()
     case 'analyze':
         analyze()
     case _:

@@ -4,7 +4,7 @@ from itertools import combinations
 from . import persistence, util
 from .textage_scraper import main as textage
 
-def scrape() -> None:
+def scrape_score() -> None:
     page = textage.scrape_score_page()
     notes = page.notes
     notes.sort()

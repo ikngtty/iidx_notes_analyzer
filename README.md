@@ -70,14 +70,14 @@ playwright install chromium
 
 仮想環境を用意しようと関係なく、ブラウザエンジンはグローバルにインストールされます。残念。
 
-### 5. `scrape`を実行
+### 5. `scrape_score`を実行
 
 ようやくプログラムの実行です。\
-まずは`scrape`を実行することで、TexTageから譜面データをスクレイピングしてきます。
+まずは`scrape_score`を実行することで、TexTageから譜面データをスクレイピングしてきます。
 
 ```console
 # 本ツールのあるフォルダ上で実行してください。
-python -m iidx_notes_analyzer scrape
+python -m iidx_notes_analyzer scrape_score
 ```
 
 取ってきたデータは本ツールがあるフォルダ直下の`data`フォルダ下に保存されます。\
