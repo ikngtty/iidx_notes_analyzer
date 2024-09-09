@@ -1,6 +1,6 @@
 from playwright.sync_api import sync_playwright
 
-def scrape():
+def fetch_notes():
     with sync_playwright() as pw:
         browser = pw.chromium.launch()
         page = browser.new_page()

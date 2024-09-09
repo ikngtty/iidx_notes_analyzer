@@ -1,8 +1,8 @@
 from iidx_notes_analyzer import persistence
-from iidx_notes_analyzer.textage_scraper.main import scrape
+from iidx_notes_analyzer.textage_scraper.main import fetch_notes
 
 def main():
-    notes = scrape()
+    notes = fetch_notes()
     notes.sort()
     persistence.save(notes)
 
