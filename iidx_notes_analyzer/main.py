@@ -2,10 +2,10 @@ from collections import Counter
 from itertools import combinations
 
 from . import persistence, util
-from .textage_scraper.main import fetch_notes
+from .textage_scraper import main as textage
 
 def scrape():
-    notes = fetch_notes()
+    notes = textage.fetch_notes()
     notes.sort()
     persistence.save(notes)
 
