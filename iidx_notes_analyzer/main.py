@@ -7,10 +7,10 @@ from .textage_scraper import main as textage
 def scrape():
     notes = textage.fetch_notes()
     notes.sort()
-    persistence.save(notes)
+    persistence.save_notes(notes)
 
 def analyze():
-    notes = persistence.load()
+    notes = persistence.load_notes()
     chords = util.to_chords(notes)
     chord_counts = Counter(chords)
     for has_scratch in [False, True]:
