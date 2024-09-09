@@ -5,7 +5,8 @@ from . import persistence, util
 from .textage_scraper import main as textage
 
 def scrape() -> None:
-    notes = textage.fetch_notes()
+    page = textage.scrape_score_page()
+    notes = page.notes
     notes.sort()
     persistence.save_notes(notes)
 
