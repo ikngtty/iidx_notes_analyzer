@@ -5,6 +5,12 @@ from playwright.sync_api import sync_playwright
 
 DATA_DIR_PATH = 'data'
 
+def main():
+    os.makedirs(DATA_DIR_PATH, exist_ok=True)
+    notes = scrape()
+    notes.sort()
+    save(notes)
+
 def scrape():
     with sync_playwright() as pw:
         browser = pw.chromium.launch()
@@ -22,7 +28,5 @@ def save(notes):
     with open(saving_file_path, 'w') as f:
         json.dump(notes, f)
 
-os.makedirs(DATA_DIR_PATH, exist_ok=True)
-notes = scrape()
-notes.sort()
-save(notes)
+if __name__ == '__main__':
+    main()

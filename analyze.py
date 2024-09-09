@@ -5,6 +5,22 @@ import os
 
 DATA_DIR_PATH = 'data'
 
+def main():
+    notes = load()
+    chords = to_chords(notes)
+    chord_counts = Counter(chords)
+    for has_scratch in [False, True]:
+        for note_count_in_chord in range(1, 8):
+            for keys in combinations(range(1, 8), note_count_in_chord):
+                chord = int(has_scratch)
+                for key in keys:
+                    chord |= 1 << key
+
+                count = chord_counts[chord]
+                if count > 0:
+                    chord_str = chord_to_str(chord)
+                    print(f'{chord_str}:{count}')
+
 def load():
     notes_file_path = os.path.join(DATA_DIR_PATH, 'aa_amuro.json')
     with open(notes_file_path) as f:
@@ -20,9 +36,6 @@ def to_chords(notes):
         chords.append(chord)
     return chords
 
-def reversed_str(s):
-    return s[::-1]
-
 def chord_to_str(chord):
     scratch_str = 'S' if chord & 1 == 1 else ' '
     keys = chord >> 1
@@ -31,17 +44,8 @@ def chord_to_str(chord):
         .replace('0', '_')
     return scratch_str + keys_str
 
-notes = load()
-chords = to_chords(notes)
-chord_counts = Counter(chords)
-for has_scratch in [False, True]:
-    for note_count_in_chord in range(1, 8):
-        for keys in combinations(range(1, 8), note_count_in_chord):
-            chord = int(has_scratch)
-            for key in keys:
-                chord |= 1 << key
+def reversed_str(s):
+    return s[::-1]
 
-            count = chord_counts[chord]
-            if count > 0:
-                chord_str = chord_to_str(chord)
-                print(f'{chord_str}:{count}')
+if __name__ == '__main__':
+    main()
