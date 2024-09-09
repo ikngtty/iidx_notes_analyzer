@@ -4,6 +4,8 @@ import os
 DATA_DIR_PATH = 'data'
 
 def save(notes):
+    os.makedirs(DATA_DIR_PATH, exist_ok=True)
+
     saving_file_path = os.path.join(DATA_DIR_PATH, 'aa_amuro.json')
     if os.path.exists(saving_file_path):
         raise FileExistsError(saving_file_path)

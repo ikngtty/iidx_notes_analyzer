@@ -1,11 +1,8 @@
-import os
-
 from playwright.sync_api import sync_playwright
 
 from iidx_notes_analyzer import persistence
 
 def main():
-    os.makedirs(persistence.DATA_DIR_PATH, exist_ok=True)
     notes = scrape()
     notes.sort()
     persistence.save(notes)
