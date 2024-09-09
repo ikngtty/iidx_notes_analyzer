@@ -70,14 +70,14 @@ playwright install chromium
 
 仮想環境を用意しようと関係なく、ブラウザエンジンはグローバルにインストールされます。残念。
 
-### 5. `scrape.py`を実行
+### 5. `scrape`を実行
 
 ようやくプログラムの実行です。\
-まずは`scrape.py`を実行することで、TexTageから譜面データをスクレイピングしてきます。
+まずは`scrape`を実行することで、TexTageから譜面データをスクレイピングしてきます。
 
 ```console
 # 本ツールのあるフォルダ上で実行してください。
-python scrape.py
+python -m iidx_notes_analyzer scrape
 ```
 
 取ってきたデータは本ツールがあるフォルダ直下の`data`フォルダ下に保存されます。\
@@ -86,11 +86,11 @@ python scrape.py
 とりあえずAA(SPA)の譜面データだけ保存するところまで作りました。\
 次はACの全曲の譜面データを保存できるようにするつもりです。
 
-### 6. `analyze.py`を実行
+### 6. `analyze`を実行
 
 ```console
 # 本ツールのあるフォルダ上で実行してください。
-python analyze.py
+python -m iidx_notes_analyzer analyze
 ```
 
 保存した譜面データを分析し、結果を表示します。
