@@ -1,15 +1,14 @@
-import json
 import os
 
 from playwright.sync_api import sync_playwright
 
-DATA_DIR_PATH = 'data'
+from iidx_notes_analyzer import persistence
 
 def main():
-    os.makedirs(DATA_DIR_PATH, exist_ok=True)
+    os.makedirs(persistence.DATA_DIR_PATH, exist_ok=True)
     notes = scrape()
     notes.sort()
-    save(notes)
+    persistence.save(notes)
 
 def scrape():
     with sync_playwright() as pw:
@@ -19,14 +18,6 @@ def scrape():
         notes = page.evaluate('npos')
         browser.close()
     return notes
-
-def save(notes):
-    saving_file_path = os.path.join(DATA_DIR_PATH, 'aa_amuro.json')
-    if os.path.exists(saving_file_path):
-        raise FileExistsError(saving_file_path)
-
-    with open(saving_file_path, 'w') as f:
-        json.dump(notes, f)
 
 if __name__ == '__main__':
     main()

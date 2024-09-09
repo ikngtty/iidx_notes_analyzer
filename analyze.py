@@ -1,12 +1,10 @@
 from collections import Counter
 from itertools import combinations, groupby
-import json
-import os
 
-DATA_DIR_PATH = 'data'
+from iidx_notes_analyzer import persistence
 
 def main():
-    notes = load()
+    notes = persistence.load()
     chords = to_chords(notes)
     chord_counts = Counter(chords)
     for has_scratch in [False, True]:
@@ -20,11 +18,6 @@ def main():
                 if count > 0:
                     chord_str = chord_to_str(chord)
                     print(f'{chord_str}:{count}')
-
-def load():
-    notes_file_path = os.path.join(DATA_DIR_PATH, 'aa_amuro.json')
-    with open(notes_file_path) as f:
-        return json.load(f)
 
 def to_chords(notes):
     # TODO: 1Pの譜面か2Pの譜面かを考慮してない（特にDP）
