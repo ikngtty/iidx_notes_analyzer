@@ -4,12 +4,12 @@ from itertools import combinations
 from . import persistence, util
 from .textage_scraper import main as textage
 
-def scrape():
+def scrape() -> None:
     notes = textage.fetch_notes()
     notes.sort()
     persistence.save_notes(notes)
 
-def analyze():
+def analyze() -> None:
     notes = persistence.load_notes()
     chords = util.to_chords(notes)
     chord_counts = Counter(chords)

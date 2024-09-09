@@ -1,6 +1,8 @@
+from typing import List
+
 from playwright.sync_api import sync_playwright
 
-def fetch_notes():
+def fetch_notes() -> List[int]:
     with sync_playwright() as pw:
         browser = pw.chromium.launch()
         page = browser.new_page()
