@@ -1,6 +1,8 @@
 import re
 from typing import NamedTuple, Self
 
+from . import iidx
+
 HOST = 'https://textage.cc/'
 
 SONG_LIST_PAGE = HOST + 'score/index.html'
@@ -10,8 +12,8 @@ ALL_SONG_LIST_PAGE = SONG_LIST_PAGE + '?a001B000'
 class ScorePageParams(NamedTuple):
     version: str
     song_id: str
-    play_side: str
-    score_kind: str
+    play_side: iidx.PlaySide
+    score_kind: iidx.ScoreKind
     level: int
 
     @classmethod
@@ -40,7 +42,7 @@ class ScorePageParams(NamedTuple):
         return HOST + f'score/{ver}/{id}.html?{side}{kind}{level}00'
 
     @classmethod
-    def encode_play_side(cls, play_side: str) -> str:
+    def encode_play_side(cls, play_side: iidx.PlaySide) -> str:
         match play_side:
             case '1P':
                 return '1'
@@ -52,7 +54,7 @@ class ScorePageParams(NamedTuple):
                 raise ValueError(play_side)
 
     @classmethod
-    def decode_play_side(cls, play_side: str) -> str:
+    def decode_play_side(cls, play_side: str) -> iidx.PlaySide:
         match play_side:
             case '1':
                 return '1P'
@@ -64,7 +66,7 @@ class ScorePageParams(NamedTuple):
                 raise ValueError(play_side)
 
     @classmethod
-    def encode_score_kind(cls, score_kind: str) -> str:
+    def encode_score_kind(cls, score_kind: iidx.ScoreKind) -> str:
         match score_kind:
             case 'B':
                 return 'P'
@@ -80,7 +82,7 @@ class ScorePageParams(NamedTuple):
                 raise ValueError(score_kind)
 
     @classmethod
-    def decode_score_kind(cls, score_kind: str) -> str:
+    def decode_score_kind(cls, score_kind: str) -> iidx.ScoreKind:
         match score_kind:
             case 'P':
                 return 'B'
