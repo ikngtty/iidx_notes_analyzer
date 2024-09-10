@@ -11,7 +11,8 @@ def scrape_song_list() -> None:
         print(score_page)
 
 def scrape_score() -> None:
-    page = textage.scrape_score_page()
+    aa_spa = textage.url.ScorePageParams('11', 'aa_amuro', '1P', 'A', 12)
+    page = textage.scrape_score_page(aa_spa)
     notes = page.notes
     notes.sort()
     persistence.save_notes(notes)

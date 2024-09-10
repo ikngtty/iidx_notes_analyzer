@@ -28,11 +28,11 @@ def scrape_song_list_page() -> SongListPage:
 class ScorePage(NamedTuple):
     notes: List[int]
 
-def scrape_score_page() -> ScorePage:
+def scrape_score_page(url_params: url.ScorePageParams) -> ScorePage:
     with sync_playwright() as pw:
         browser = pw.chromium.launch()
         page = browser.new_page()
-        page.goto('https://textage.cc/score/11/aa_amuro.html?1AC00')
+        page.goto(url_params.to_url())
 
         notes = page.evaluate('npos')
 
