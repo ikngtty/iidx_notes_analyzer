@@ -4,6 +4,12 @@ from itertools import combinations
 from . import persistence, util
 from .textage_scraper import main as textage
 
+def scrape_song_list() -> None:
+    page = textage.scrape_song_list_page()
+    score_pages = page.score_pages
+    for score_page in score_pages:
+        print(score_page)
+
 def scrape_score() -> None:
     page = textage.scrape_score_page()
     notes = page.notes
