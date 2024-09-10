@@ -4,6 +4,8 @@ from itertools import combinations
 from . import persistence, util
 from .textage_scraper import main as textage
 
+AA_SPA = textage.url.ScorePageParams('11', 'aa_amuro', '1P', 'A', 12)
+
 def scrape_song_list() -> None:
     page = textage.scrape_song_list_page()
     score_pages = page.score_pages
@@ -11,14 +13,17 @@ def scrape_song_list() -> None:
         print(score_page)
 
 def scrape_score() -> None:
-    aa_spa = textage.url.ScorePageParams('11', 'aa_amuro', '1P', 'A', 12)
-    page = textage.scrape_score_page(aa_spa)
+    page = textage.scrape_score_page(AA_SPA)
     notes = page.notes
     notes.sort()
-    persistence.save_notes(notes)
+    persistence.save_notes(
+        AA_SPA.play_side, AA_SPA.song_id, AA_SPA.score_kind, notes
+    )
 
 def analyze() -> None:
-    notes = persistence.load_notes()
+    notes = persistence.load_notes(
+        AA_SPA.play_side, AA_SPA.song_id, AA_SPA.score_kind
+    )
     chords = util.to_chords(notes)
     chord_counts = Counter(chords)
     for has_scratch in [False, True]:
