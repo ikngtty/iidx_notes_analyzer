@@ -17,12 +17,15 @@ def scrape_score() -> None:
     notes = page.notes
     notes.sort()
     persistence.save_notes(
-        AA_SPA.play_side, AA_SPA.song_id, AA_SPA.score_kind, notes
+        AA_SPA.play_side, AA_SPA.version,
+        AA_SPA.song_id, AA_SPA.score_kind,
+        notes
     )
 
 def analyze() -> None:
     notes = persistence.load_notes(
-        AA_SPA.play_side, AA_SPA.song_id, AA_SPA.score_kind
+        AA_SPA.play_side, AA_SPA.version,
+        AA_SPA.song_id, AA_SPA.score_kind,
     )
     chords = util.to_chords(notes)
     chord_counts = Counter(chords)
