@@ -7,7 +7,7 @@ from .textage_scraper import iidx
 DATA_DIR_PATH = 'data'
 
 def get_notes_dir_path(play_side: iidx.PlaySide, version: str) -> str:
-    return os.path.join(DATA_DIR_PATH, play_side, version)
+    return os.path.join(DATA_DIR_PATH, 'notes', play_side, version)
 
 def get_notes_file_path(
     play_side: iidx.PlaySide, version: str,
