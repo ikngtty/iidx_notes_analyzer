@@ -2,17 +2,17 @@ import argparse
 
 from .main import analyze, scrape_score, scrape_song_list
 
-arg_parser = argparse.ArgumentParser(prog='iidx_notes_analyzer')
-sub_command_parser = arg_parser.add_subparsers(
+p = argparse.ArgumentParser(prog='iidx_notes_analyzer')
+p_sub = p.add_subparsers(
     help='sub-command',
     dest='subcommand',
     required=True,
 )
-arg_parser_for_scrape_song_list = sub_command_parser.add_parser('scrape_song_list')
-arg_parser_for_scrape_score = sub_command_parser.add_parser('scrape_score')
-arg_parser_for_analyze = sub_command_parser.add_parser('analyze')
+p_scrape_song_list = p_sub.add_parser('scrape_song_list')
+p_scrape_score = p_sub.add_parser('scrape_score')
+p_analyze = p_sub.add_parser('analyze')
 
-args = arg_parser.parse_args()
+args = p.parse_args()
 match args.subcommand:
     case 'scrape_song_list':
         scrape_song_list()
