@@ -73,7 +73,7 @@ playwright install chromium
 ### 5. `scrape_song_list`を実行
 
 ようやくプログラムの実行です。\
-まずは`scrape_song_list`を実行することで、TexTageから楽曲データをスクレイピングしてきます。
+まずは`scrape_song_list`を実行することで、TexTageから楽曲一覧をスクレイピングしてきます。
 
 ```console
 # 本ツールのあるフォルダ上で実行してください。
@@ -85,15 +85,30 @@ python -m iidx_notes_analyzer scrape_song_list
 
 ### 6. `scrape_score`を実行
 
-次に`scrape_score`を実行することで、曲毎に譜面データをスクレイピングしてきます。
+次に`scrape_score`を実行することで、曲毎に譜面データをスクレイピングしてきます。\
+対象曲のリストアップに、上で保存した楽曲一覧を使用します。
 
 ```console
 # 本ツールのあるフォルダ上で実行してください。
+# AC全曲を一気に（非常に時間がかかるので、条件を絞る方がオススメ）
 python -m iidx_notes_analyzer scrape_score
+# SPのみ
+python -m iidx_notes_analyzer scrape_score 1P
+# SPかつIIDX REDのみ
+python -m iidx_notes_analyzer scrape_score 1P 11
+# SPかつAAのみ（曲に対応するIDはTexTageのURLを元に自分で調べてください）
+python -m iidx_notes_analyzer scrape_score 1P 11 aa_amuro
+# AA(SPA)のみ
+python -m iidx_notes_analyzer scrape_score 1P 11 aa_amuro A
+# 全曲のDPAのみ
+python -m iidx_notes_analyzer scrape_score DP '' '' A
 ```
 
-とりあえずAA(SPA)の譜面データだけ保存するところまで作りました。\
-次はACの全曲の譜面データを保存できるようにするつもりです。
+なお、Substreamは`s`です。\
+また、難易度はB, N, H, A, Lの5種類です。
+
+譜面データは`data/notes`フォルダに保存されます。
+一度保存した譜面は次は保存対象外となるので、再度保存し直したい譜面がある場合は既存の譜面データを削除してください。
 
 ### 7. `analyze`を実行
 

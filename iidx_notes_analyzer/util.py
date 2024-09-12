@@ -1,5 +1,6 @@
 from itertools import groupby
-from typing import List
+from time import sleep
+from typing import Iterable, Iterator, List
 
 def to_chords(notes: List[int]) -> List[int]:
     # TODO: 1Pの譜面か2Pの譜面かを考慮してない（特にDP）
@@ -21,3 +22,9 @@ def chord_to_str(chord: int) -> str:
 
 def reversed_str(s: str) -> str:
     return s[::-1]
+
+def iterate_with_interval[T](iter: Iterable[T], seconds: float) -> Iterator[T]:
+    for i, e in enumerate(iter):
+        if i > 0:
+            sleep(seconds)
+        yield e
