@@ -3,8 +3,24 @@ import os
 from typing import List
 
 from .textage_scraper import iidx
+from .textage_scraper.url import ScorePageParams
 
 DATA_DIR_PATH = 'data'
+SCORE_PAGES_FILE_PATH = os.path.join(DATA_DIR_PATH, 'score_pages.json')
+
+# TODO: 保存先ファイルが重複した時にどうするか
+
+def save_score_pages(scores: List[ScorePageParams]):
+    with open(SCORE_PAGES_FILE_PATH, 'w') as f:
+        json.dump(scores, f)
+
+def load_score_pages() -> List[ScorePageParams]:
+    with open(SCORE_PAGES_FILE_PATH) as f:
+        score_page_param_lists = json.load(f)
+
+    return [
+        ScorePageParams(*param_list) for param_list in score_page_param_lists
+    ]
 
 def get_notes_dir_path(play_side: iidx.PlaySide, version: str) -> str:
     return os.path.join(DATA_DIR_PATH, 'notes', play_side, version)

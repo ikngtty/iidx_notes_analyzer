@@ -1,6 +1,8 @@
 from collections import Counter
 from itertools import combinations
 
+from .textage_scraper.url import ScorePageParams
+
 from . import persistence, util
 from .textage_scraper import main as textage
 
@@ -9,8 +11,7 @@ AA_SPA = textage.url.ScorePageParams('11', 'aa_amuro', '1P', 'A', 12)
 def scrape_song_list() -> None:
     page = textage.scrape_song_list_page()
     score_pages = page.score_pages
-    for score_page in score_pages:
-        print(score_page)
+    persistence.save_score_pages(score_pages)
 
 def scrape_score() -> None:
     page = textage.scrape_score_page(AA_SPA)
