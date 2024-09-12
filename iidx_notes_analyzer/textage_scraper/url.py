@@ -101,13 +101,13 @@ class ScorePageParams(NamedTuple):
     def encode_level(cls, level: int) -> str:
         if level < 1 or 12 < level:
             raise ValueError(level)
-        return '0123456789ABC'[level]
+        return '123456789ABC'[level - 1]
 
     @classmethod
     def decode_level(cls, level: str) -> int:
         if not len(level) == 1:
             raise ValueError(level)
-        pos = '0123456789ABC'.find(level)
-        if pos < 1:
+        pos = '123456789ABC'.find(level)
+        if pos < 0:
             raise ValueError(level)
-        return pos
+        return pos + 1
