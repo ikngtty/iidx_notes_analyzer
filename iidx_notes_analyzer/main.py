@@ -1,5 +1,6 @@
 from collections import Counter
 from itertools import combinations
+from time import sleep
 
 from .textage_scraper.url import ScorePageParams
 
@@ -18,30 +19,46 @@ def scrape_song_list() -> None:
 # （2P譜面へのアクセスもやめられる）
 # TODO: 引数全部指定されてたら、譜面ページリストにデータがなくてもレベル0にして
 # 譜面取りに行ってくるようにしたい
-# TODO: 進捗表示
 # TODO: 既存のファイルを飛ばす
 def scrape_score(
     play_side: str, version: str, song_id: str, score_kind: str
 ) -> None:
-    all_score_pages = persistence.load_score_pages()
-    target_score_pages = [
-        p for p in all_score_pages
+    all_pages = persistence.load_score_pages()
+    target_pages = [
+        p for p in all_pages
         if not play_side or p.play_side == play_side
         if not version or p.version == version
         if not song_id or p.song_id == song_id
         if not score_kind or p.score_kind == score_kind
     ]
 
-    # スクレイピング先のサーバーへの負荷を下げるために1秒間隔でスクレイピングする
-    for score_page_params in util.iterate_with_interval(target_score_pages, 1):
-        page = textage.scrape_score_page(score_page_params)
+    print(f'Found {len(target_pages)} scores.')
+
+    for page_index, page_params in enumerate(target_pages):
+        # スクレイピング先のサーバーへの負荷を下げるために1秒間隔を空ける
+        if page_index > 0:
+            sleep(1)
+
+        page_text =\
+            f'{page_params.play_side} '\
+            f'VER:{page_params.version} '\
+            f'{page_params.song_id} '\
+            f'({page_params.score_kind})'
+        print(
+            f'Scraping {page_index + 1}/{len(target_pages)} {page_text} ...',
+            end='', flush=True
+        )
+
+        page = textage.scrape_score_page(page_params)
         notes = page.notes
         notes.sort()
         persistence.save_notes(
-            score_page_params.play_side, score_page_params.version,
-            score_page_params.song_id, score_page_params.score_kind,
+            page_params.play_side, page_params.version,
+            page_params.song_id, page_params.score_kind,
             notes
         )
+
+        print('finished.')
 
 def analyze() -> None:
     notes = persistence.load_notes(
