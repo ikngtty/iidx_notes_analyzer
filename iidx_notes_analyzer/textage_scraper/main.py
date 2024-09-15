@@ -5,6 +5,8 @@ from playwright.sync_api import sync_playwright
 
 from . import url
 
+# TODO: chromimuを毎回起動／終了してるの効率悪いので制御可能にしたい。
+
 class SongListPage(NamedTuple):
     score_pages: List[url.ScorePageParams]
 
