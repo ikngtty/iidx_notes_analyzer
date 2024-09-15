@@ -11,6 +11,8 @@ SCORE_PAGES_FILE_PATH = os.path.join(DATA_DIR_PATH, 'score_pages.json')
 # TODO: 保存先ファイルが重複した時にどうするか
 
 def save_score_pages(scores: List[ScorePageParams]):
+    os.makedirs(DATA_DIR_PATH, exist_ok=True)
+
     with open(SCORE_PAGES_FILE_PATH, 'w') as f:
         json.dump(scores, f)
 
