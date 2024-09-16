@@ -1,7 +1,6 @@
 from itertools import groupby
-from typing import List
 
-def to_chords(notes: List[int]) -> List[int]:
+def to_chords(notes: list[int]) -> list[int]:
     # TODO: 1Pの譜面か2Pの譜面かを考慮してない（特にDP）
     chords = []
     for _, notes_of_chord in groupby(notes, lambda note: note // 10):

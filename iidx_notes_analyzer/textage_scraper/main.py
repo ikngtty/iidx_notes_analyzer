@@ -1,5 +1,5 @@
 import re
-from typing import List, NamedTuple
+from typing import NamedTuple
 
 from playwright.sync_api import sync_playwright
 
@@ -8,7 +8,7 @@ from . import url
 # TODO: chromimuを毎回起動／終了してるの効率悪いので制御可能にしたい。
 
 class SongListPage(NamedTuple):
-    score_pages: List[url.ScorePageParams]
+    score_pages: list[url.ScorePageParams]
 
 def scrape_song_list_page() -> SongListPage:
     with sync_playwright() as pw:
@@ -28,7 +28,7 @@ def scrape_song_list_page() -> SongListPage:
     return SongListPage(score_pages)
 
 class ScorePage(NamedTuple):
-    notes: List[int]
+    notes: list[int]
 
 def scrape_score_page(url_params: url.ScorePageParams) -> ScorePage:
     with sync_playwright() as pw:

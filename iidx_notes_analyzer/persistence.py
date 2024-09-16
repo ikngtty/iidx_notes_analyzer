@@ -1,6 +1,5 @@
 import json
 import os
-from typing import List
 
 from .textage_scraper import iidx
 from .textage_scraper.url import ScorePageParams
@@ -10,13 +9,13 @@ _SCORE_PAGES_FILE_PATH = os.path.join(_DATA_DIR_PATH, 'score_pages.json')
 
 # TODO: 保存先ファイルが重複した時にどうするか
 
-def save_score_pages(scores: List[ScorePageParams]):
+def save_score_pages(scores: list[ScorePageParams]):
     os.makedirs(_DATA_DIR_PATH, exist_ok=True)
 
     with open(_SCORE_PAGES_FILE_PATH, 'w') as f:
         json.dump(scores, f)
 
-def load_score_pages() -> List[ScorePageParams]:
+def load_score_pages() -> list[ScorePageParams]:
     with open(_SCORE_PAGES_FILE_PATH) as f:
         score_page_param_lists = json.load(f)
 
@@ -38,7 +37,7 @@ def _get_notes_file_path(
 def save_notes(
     play_side: iidx.PlaySide, version: str,
     song_id: str, score_kind: iidx.ScoreKind,
-    notes: List[int],
+    notes: list[int],
 ) -> None:
     os.makedirs(_get_notes_dir_path(play_side, version), exist_ok=True)
 
@@ -54,7 +53,7 @@ def save_notes(
 def load_notes(
     play_side: iidx.PlaySide, version: str,
     song_id: str, score_kind: iidx.ScoreKind,
-) -> List[int]:
+) -> list[int]:
     load_file_path = _get_notes_file_path(
         play_side, version, song_id, score_kind
     )
