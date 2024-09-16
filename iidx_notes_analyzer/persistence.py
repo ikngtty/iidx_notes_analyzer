@@ -8,6 +8,7 @@ _DATA_DIR_PATH = 'data'
 _SCORE_PAGES_FILE_PATH = os.path.join(_DATA_DIR_PATH, 'score_pages.json')
 
 # TODO: 保存先ファイルが重複した時にどうするか
+# TODO: json.load()でAnyの値を取り回してるのでもっと厳格にしたい
 
 def save_score_pages(scores: list[ScorePageParams]):
     os.makedirs(_DATA_DIR_PATH, exist_ok=True)
