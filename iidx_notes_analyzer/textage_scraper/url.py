@@ -16,6 +16,8 @@ class ScorePageParams(NamedTuple):
     score_kind: iidx.ScoreKind
     level: int
 
+    _LEVEL_CODES = '123456789ABC'
+
     @classmethod
     def from_url(cls, url: str) -> Self:
         pattern = re.compile(
@@ -99,15 +101,16 @@ class ScorePageParams(NamedTuple):
 
     @classmethod
     def encode_level(cls, level: int) -> str:
-        if level < 1 or 12 < level:
+        pos = level - 1
+        if pos < 0 or pos >= len(cls._LEVEL_CODES):
             raise ValueError(level)
-        return '123456789ABC'[level - 1]
+        return cls._LEVEL_CODES[pos]
 
     @classmethod
     def decode_level(cls, level: str) -> int:
         if not len(level) == 1:
             raise ValueError(level)
-        pos = '123456789ABC'.find(level)
+        pos = cls._LEVEL_CODES.find(level)
         if pos < 0:
             raise ValueError(level)
         return pos + 1
