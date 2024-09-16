@@ -14,7 +14,7 @@ class ScorePageParams(NamedTuple):
     song_id: str
     play_side: iidx.PlaySide
     score_kind: iidx.ScoreKind
-    level: int
+    level: iidx.Level
 
     _LEVEL_CODES = '123456789ABC'
 
@@ -100,17 +100,19 @@ class ScorePageParams(NamedTuple):
                 raise ValueError(score_kind)
 
     @classmethod
-    def encode_level(cls, level: int) -> str:
+    def encode_level(cls, level: iidx.Level) -> str:
         pos = level - 1
         if pos < 0 or pos >= len(cls._LEVEL_CODES):
             raise ValueError(level)
         return cls._LEVEL_CODES[pos]
 
     @classmethod
-    def decode_level(cls, level: str) -> int:
+    def decode_level(cls, level: str) -> iidx.Level:
         if not len(level) == 1:
             raise ValueError(level)
         pos = cls._LEVEL_CODES.find(level)
         if pos < 0:
             raise ValueError(level)
-        return pos + 1
+        level_num = pos + 1
+        assert iidx.is_valid_for_level(level_num)
+        return level_num
