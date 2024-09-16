@@ -56,8 +56,8 @@ class ScorePageParams(NamedTuple):
                 raise ValueError(play_side)
 
     @classmethod
-    def decode_play_side(cls, play_side: str) -> iidx.PlaySide:
-        match play_side:
+    def decode_play_side(cls, code: str) -> iidx.PlaySide:
+        match code:
             case '1':
                 return '1P'
             case '2':
@@ -65,7 +65,7 @@ class ScorePageParams(NamedTuple):
             case 'D':
                 return 'DP'
             case _:
-                raise ValueError(play_side)
+                raise ValueError(code)
 
     @classmethod
     def encode_score_kind(cls, score_kind: iidx.ScoreKind) -> str:
@@ -84,8 +84,8 @@ class ScorePageParams(NamedTuple):
                 raise ValueError(score_kind)
 
     @classmethod
-    def decode_score_kind(cls, score_kind: str) -> iidx.ScoreKind:
-        match score_kind:
+    def decode_score_kind(cls, code: str) -> iidx.ScoreKind:
+        match code:
             case 'P':
                 return 'B'
             case 'N':
@@ -97,7 +97,7 @@ class ScorePageParams(NamedTuple):
             case 'X':
                 return 'L'
             case _:
-                raise ValueError(score_kind)
+                raise ValueError(code)
 
     @classmethod
     def encode_level(cls, level: iidx.Level) -> str:
@@ -107,12 +107,12 @@ class ScorePageParams(NamedTuple):
         return cls._LEVEL_CODES[pos]
 
     @classmethod
-    def decode_level(cls, level: str) -> iidx.Level:
-        if not len(level) == 1:
-            raise ValueError(level)
-        pos = cls._LEVEL_CODES.find(level)
+    def decode_level(cls, code: str) -> iidx.Level:
+        if not len(code) == 1:
+            raise ValueError(code)
+        pos = cls._LEVEL_CODES.find(code)
         if pos < 0:
-            raise ValueError(level)
-        level_num = pos + 1
-        assert iidx.is_valid_for_level(level_num)
-        return level_num
+            raise ValueError(code)
+        level = pos + 1
+        assert iidx.is_valid_for_level(level)
+        return level
