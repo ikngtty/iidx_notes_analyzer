@@ -33,12 +33,8 @@ def scrape_score(
 
     print(f'Found {len(target_pages)} scores.')
 
+    has_scraped = False
     for page_index, page_params in enumerate(target_pages):
-        # スクレイピング先のサーバーへの負荷を下げるために1秒間隔を空ける
-        # TODO: スキップ後は空ける必要ない
-        if page_index > 0:
-            sleep(1)
-
         page_text =\
             f'{page_params.play_side} '\
             f'VER:{page_params.version} '\
@@ -56,7 +52,14 @@ def scrape_score(
             print('skipped.')
             continue
 
+        # スクレイピング先のサーバーへの負荷を下げるために1秒間隔を空ける
+        # TODO: scraperの方が自動でそれ管理してくれたらいいなぁ
+        if has_scraped:
+            sleep(1)
+            has_scraped = False
+
         page = textage.scrape_score_page(page_params)
+        has_scraped = True
         notes = page.notes
         notes.sort()
         persistence.save_notes(
