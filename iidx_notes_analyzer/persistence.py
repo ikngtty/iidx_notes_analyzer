@@ -35,6 +35,15 @@ def _get_notes_file_path(
     filename = f'{song_id}({score_kind}).json'
     return os.path.join(dir, filename)
 
+def has_saved_notes(
+    play_side: iidx.PlaySide, version: str,
+    song_id: str, score_kind: iidx.ScoreKind,
+) -> bool:
+    file_path = _get_notes_file_path(
+        play_side, version, song_id, score_kind
+    )
+    return os.path.exists(file_path)
+
 def save_notes(
     play_side: iidx.PlaySide, version: str,
     song_id: str, score_kind: iidx.ScoreKind,

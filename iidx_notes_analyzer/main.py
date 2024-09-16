@@ -19,7 +19,6 @@ def scrape_song_list() -> None:
 # （2P譜面へのアクセスもやめられる）
 # TODO: 引数全部指定されてたら、譜面ページリストにデータがなくてもレベル0にして
 # 譜面取りに行ってくるようにしたい
-# TODO: 既存のファイルを飛ばす
 def scrape_score(
     play_side: str, version: str, song_id: str, score_kind: str
 ) -> None:
@@ -36,6 +35,7 @@ def scrape_score(
 
     for page_index, page_params in enumerate(target_pages):
         # スクレイピング先のサーバーへの負荷を下げるために1秒間隔を空ける
+        # TODO: スキップ後は空ける必要ない
         if page_index > 0:
             sleep(1)
 
@@ -48,6 +48,13 @@ def scrape_score(
             f'Scraping {page_index + 1}/{len(target_pages)} {page_text} ...',
             end='', flush=True
         )
+
+        if persistence.has_saved_notes(
+            page_params.play_side, page_params.version,
+            page_params.song_id, page_params.score_kind
+        ):
+            print('skipped.')
+            continue
 
         page = textage.scrape_score_page(page_params)
         notes = page.notes
