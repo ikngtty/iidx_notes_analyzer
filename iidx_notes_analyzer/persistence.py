@@ -42,21 +42,21 @@ def save_notes(
 ) -> None:
     os.makedirs(_get_notes_dir_path(play_side, version), exist_ok=True)
 
-    save_file_path = _get_notes_file_path(
+    file_path = _get_notes_file_path(
         play_side, version, song_id, score_kind
     )
-    if os.path.exists(save_file_path):
-        raise FileExistsError(save_file_path)
+    if os.path.exists(file_path):
+        raise FileExistsError(file_path)
 
-    with open(save_file_path, 'w') as f:
+    with open(file_path, 'w') as f:
         json.dump(notes, f)
 
 def load_notes(
     play_side: iidx.PlaySide, version: str,
     song_id: str, score_kind: iidx.ScoreKind,
 ) -> list[int]:
-    load_file_path = _get_notes_file_path(
+    file_path = _get_notes_file_path(
         play_side, version, song_id, score_kind
     )
-    with open(load_file_path) as f:
+    with open(file_path) as f:
         return json.load(f)
