@@ -33,6 +33,17 @@ def scrape_score(
 
     has_scraped = False
     for page_index, page_params in enumerate(target_pages):
+        does_skip = persistence.has_saved_notes(
+            page_params.play_side, page_params.version,
+            page_params.song_id, page_params.score_kind
+        )
+
+        # スクレイピング先のサーバーへの負荷を下げるために1秒間隔を空ける
+        # TODO: scraperの方が自動でそれ管理してくれたらいいなぁ
+        if not does_skip and has_scraped:
+            sleep(1)
+            has_scraped = False
+
         page_text =\
             f'{page_params.play_side} '\
             f'VER:{page_params.version} '\
@@ -43,18 +54,9 @@ def scrape_score(
             end='', flush=True
         )
 
-        if persistence.has_saved_notes(
-            page_params.play_side, page_params.version,
-            page_params.song_id, page_params.score_kind
-        ):
+        if does_skip:
             print('skipped.')
             continue
-
-        # スクレイピング先のサーバーへの負荷を下げるために1秒間隔を空ける
-        # TODO: scraperの方が自動でそれ管理してくれたらいいなぁ
-        if has_scraped:
-            sleep(1)
-            has_scraped = False
 
         page = textage.scrape_score_page(page_params)
         has_scraped = True
