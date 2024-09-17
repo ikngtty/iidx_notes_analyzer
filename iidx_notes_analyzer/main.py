@@ -2,8 +2,6 @@ from collections import Counter
 from itertools import combinations
 from time import sleep
 
-from .textage_scraper.url import ScorePageParams
-
 from . import persistence, util
 from .textage_scraper import main as textage
 
