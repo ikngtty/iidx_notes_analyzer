@@ -7,8 +7,6 @@ from .textage_scraper.url import ScorePageParams
 from . import persistence, util
 from .textage_scraper import main as textage
 
-AA_SPA = textage.url.ScorePageParams('11', 'aa_amuro', '1P', 'A', 12)
-
 def scrape_song_list() -> None:
     page = textage.scrape_song_list_page()
     score_pages = page.score_pages
@@ -71,12 +69,25 @@ def scrape_score(
         print('finished.')
 
 def analyze() -> None:
-    notes = persistence.load_notes(
-        AA_SPA.play_side, AA_SPA.version,
-        AA_SPA.song_id, AA_SPA.score_kind,
-    )
-    chords = util.to_chords(notes)
-    chord_counts = Counter(chords)
+    # 保存されてる譜面全てが対象
+    target_scores = [
+        score for score in persistence.load_score_pages()
+        if persistence.has_saved_notes(
+            score.play_side, score.version,
+            score.song_id, score.score_kind,
+        )
+    ]
+    print(f'Found {len(target_scores)} scores.')
+
+    chord_counts = Counter()
+    for score in target_scores:
+        notes = persistence.load_notes(
+            score.play_side, score.version,
+            score.song_id, score.score_kind,
+        )
+        chords = util.to_chords(notes)
+        chord_counts += Counter(chords)
+
     for has_scratch in [False, True]:
         for note_count_in_chord in range(1, 8):
             for keys in combinations(range(1, 8), note_count_in_chord):
