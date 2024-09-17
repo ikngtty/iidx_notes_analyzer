@@ -68,7 +68,7 @@ def scrape_score(
 
         print('finished.')
 
-def analyze() -> None:
+def analyze(show_all: bool = False) -> None:
     # 保存されてる譜面全てが対象
     target_scores = [
         score for score in persistence.load_score_pages()
@@ -96,6 +96,6 @@ def analyze() -> None:
                     chord |= 1 << key
 
                 count = chord_counts[chord]
-                if count > 0:
+                if show_all or count > 0:
                     chord_str = util.chord_to_str(chord)
                     print(f'{chord_str}:{count}')

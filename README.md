@@ -115,6 +115,8 @@ python -m iidx_notes_analyzer scrape_score DP '' '' A
 ```console
 # 本ツールのあるフォルダ上で実行してください。
 python -m iidx_notes_analyzer analyze
+# 実際に出てこない同時押しパターンも含め、全てのパターンを表示したい時
+python -m iidx_notes_analyzer analyze --show-all
 ```
 
 保存した譜面データを分析し、結果を表示します。

@@ -18,6 +18,10 @@ p_scrape_score.add_argument('version', nargs='?', type=str)
 p_scrape_score.add_argument('song_id', nargs='?', type=str)
 p_scrape_score.add_argument('score_kind', nargs='?', type=str)
 
+p_analyze.add_argument('-a', '--show-all', action='store_true',
+    help='show all chord patterns even if its count is 0',
+)
+
 args = p.parse_args()
 match args.subcommand:
     case 'scrape_song_list':
@@ -28,6 +32,6 @@ match args.subcommand:
             args.play_side, args.version, args.song_id, args.score_kind
         )
     case 'analyze':
-        analyze()
+        analyze(show_all=args.show_all)
     case _:
         raise ValueError('unknown subcommand: ' + args.subcommand)
