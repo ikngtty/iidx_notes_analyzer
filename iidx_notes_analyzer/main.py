@@ -8,9 +8,10 @@ from . import persistence, util
 from .textage_scraper import main as textage
 
 def scrape_song_list() -> None:
-    page = textage.scrape_song_list_page()
-    score_pages = page.score_pages
-    persistence.save_score_pages(score_pages)
+    with textage.Client() as scraper:
+        page = scraper.scrape_song_list_page()
+        score_pages = page.score_pages
+        persistence.save_score_pages(score_pages)
 
 # TODO: 引数の型を具体化したい
 # TODO: プレイサイド（1P）よりプレイモード（SP）にしたい
@@ -31,44 +32,45 @@ def scrape_score(
 
     print(f'Found {len(target_pages)} scores.')
 
-    has_scraped = False
-    for page_index, page_params in enumerate(target_pages):
-        does_skip = persistence.has_saved_notes(
-            page_params.play_side, page_params.version,
-            page_params.song_id, page_params.score_kind
-        )
+    with textage.Client() as scraper:
+        has_scraped = False
+        for page_index, page_params in enumerate(target_pages):
+            does_skip = persistence.has_saved_notes(
+                page_params.play_side, page_params.version,
+                page_params.song_id, page_params.score_kind
+            )
 
-        # スクレイピング先のサーバーへの負荷を下げるために1秒間隔を空ける
-        # TODO: scraperの方が自動でそれ管理してくれたらいいなぁ
-        if not does_skip and has_scraped:
-            sleep(1)
-            has_scraped = False
+            # スクレイピング先のサーバーへの負荷を下げるために1秒間隔を空ける
+            # TODO: scraperの方が自動でそれ管理してくれたらいいなぁ
+            if not does_skip and has_scraped:
+                sleep(1)
+                has_scraped = False
 
-        page_text =\
-            f'{page_params.play_side} '\
-            f'VER:{page_params.version} '\
-            f'{page_params.song_id} '\
-            f'({page_params.score_kind})'
-        print(
-            f'Scraping {page_index + 1}/{len(target_pages)} {page_text} ...',
-            end='', flush=True
-        )
+            page_text =\
+                f'{page_params.play_side} '\
+                f'VER:{page_params.version} '\
+                f'{page_params.song_id} '\
+                f'({page_params.score_kind})'
+            print(
+                f'Scraping {page_index + 1}/{len(target_pages)} {page_text} ...',
+                end='', flush=True
+            )
 
-        if does_skip:
-            print('skipped.')
-            continue
+            if does_skip:
+                print('skipped.')
+                continue
 
-        page = textage.scrape_score_page(page_params)
-        has_scraped = True
-        notes = page.notes
-        notes.sort()
-        persistence.save_notes(
-            page_params.play_side, page_params.version,
-            page_params.song_id, page_params.score_kind,
-            notes
-        )
+            page = scraper.scrape_score_page(page_params)
+            has_scraped = True
+            notes = page.notes
+            notes.sort()
+            persistence.save_notes(
+                page_params.play_side, page_params.version,
+                page_params.song_id, page_params.score_kind,
+                notes
+            )
 
-        print('finished.')
+            print('finished.')
 
 def analyze(show_all: bool = False) -> None:
     # 保存されてる譜面全てが対象
