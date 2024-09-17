@@ -5,11 +5,11 @@ from time import sleep
 from . import persistence, util
 from .textage_scraper import main as textage
 
-def scrape_song_list() -> None:
+def scrape_song_list(overwrites: bool = False) -> None:
     with textage.Client() as scraper:
         page = scraper.scrape_song_list_page()
         score_pages = page.score_pages
-        persistence.save_score_pages(score_pages)
+        persistence.save_score_pages(score_pages, overwrites=overwrites)
 
 # TODO: 引数の型を具体化したい
 # TODO: プレイサイド（1P）よりプレイモード（SP）にしたい

@@ -7,11 +7,13 @@ from .textage_scraper.url import ScorePageParams
 _DATA_DIR_PATH = 'data'
 _SCORE_PAGES_FILE_PATH = os.path.join(_DATA_DIR_PATH, 'score_pages.json')
 
-# TODO: 保存先ファイルが重複した時にどうするか
 # TODO: json.load()でAnyの値を取り回してるのでもっと厳格にしたい
 
-def save_score_pages(scores: list[ScorePageParams]):
+def save_score_pages(scores: list[ScorePageParams], overwrites: bool = False):
     os.makedirs(_DATA_DIR_PATH, exist_ok=True)
+
+    if not overwrites and os.path.exists(_SCORE_PAGES_FILE_PATH):
+        raise FileExistsError(_SCORE_PAGES_FILE_PATH)
 
     with open(_SCORE_PAGES_FILE_PATH, 'w') as f:
         json.dump(scores, f)
