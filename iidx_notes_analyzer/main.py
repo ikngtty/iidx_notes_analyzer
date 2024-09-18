@@ -100,4 +100,5 @@ def analyze(show_all: bool = False) -> None:
                 count = chord_counts[chord]
                 if show_all or count > 0:
                     chord_str = util.chord_to_str(chord)
-                    print(f'{chord_str}:{count}')
+                    count_str = str(count) if count > 0 else ''
+                    print(f'{chord_str}:{count_str}')
