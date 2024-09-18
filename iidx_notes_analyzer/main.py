@@ -1,5 +1,4 @@
 from collections import Counter
-from itertools import combinations
 from time import sleep
 
 from . import persistence, util
@@ -90,15 +89,9 @@ def analyze(show_all: bool = False) -> None:
         chords = util.to_chords(notes)
         chord_counts += Counter(chords)
 
-    for has_scratch in [False, True]:
-        for note_count_in_chord in range(1, 8):
-            for keys in combinations(range(1, 8), note_count_in_chord):
-                chord = int(has_scratch)
-                for key in keys:
-                    chord |= 1 << key
-
-                count = chord_counts[chord]
-                if show_all or count > 0:
-                    chord_str = util.chord_to_str(chord)
-                    count_str = str(count) if count > 0 else ''
-                    print(f'{chord_str}:{count_str}')
+    for chord in util.all_chord_patterns():
+        count = chord_counts[chord]
+        if show_all or count > 0:
+            chord_str = util.chord_to_str(chord)
+            count_str = str(count) if count > 0 else ''
+            print(f'{chord_str}:{count_str}')

@@ -1,4 +1,5 @@
-from itertools import groupby
+from itertools import combinations, groupby
+from typing import Iterator
 
 def to_chords(notes: list[int]) -> list[int]:
     # TODO: 1Pの譜面か2Pの譜面かを考慮してない（特にDP）
@@ -9,6 +10,15 @@ def to_chords(notes: list[int]) -> list[int]:
             chord |= (1 << (note % 10))
         chords.append(chord)
     return chords
+
+def all_chord_patterns() -> Iterator[int]:
+    for has_scratch in [False, True]:
+        for note_count in range(1, 8):
+            for keys in combinations(range(1, 8), note_count):
+                chord = int(has_scratch)
+                for key in keys:
+                    chord |= 1 << key
+                yield chord
 
 def chord_to_str(chord: int) -> str:
     scratch_str = 'S' if chord & 1 == 1 else ' '
