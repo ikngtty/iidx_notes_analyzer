@@ -70,14 +70,14 @@ playwright install chromium
 
 仮想環境を用意しようと関係なく、ブラウザエンジンはグローバルにインストールされます。残念。
 
-### 5. `scrape_song_list`を実行
+### 5. `scrape_music_list`を実行
 
 ようやくプログラムの実行です。\
-まずは`scrape_song_list`を実行することで、TexTageから楽曲一覧をスクレイピングしてきます。
+まずは`scrape_music_list`を実行することで、TexTageから楽曲一覧をスクレイピングしてきます。
 
 ```console
 # 本ツールのあるフォルダ上で実行してください。
-python -m iidx_notes_analyzer scrape_song_list
+python -m iidx_notes_analyzer scrape_music_list
 ```
 
 取ってきたデータは本ツールがあるフォルダ直下の`data`フォルダ下に保存されます。\
@@ -89,7 +89,7 @@ python -m iidx_notes_analyzer scrape_song_list
 
 ```console
 # 本ツールのあるフォルダ上で実行してください。
-python -m iidx_notes_analyzer scrape_song_list --overwrite
+python -m iidx_notes_analyzer scrape_music_list --overwrite
 ```
 
 ### 6. `scrape_score`を実行
@@ -138,7 +138,7 @@ DP譜面の集計とかするとカス（プレイサイドのことを考えて
 5thのSPA譜面のみを集めてみます。
 
 ```console
-python -m iidx_notes_analyzer scrape_song_list
+python -m iidx_notes_analyzer scrape_music_list
 python -m iidx_notes_analyzer scrape_score 1P 5 '' A
 ```
 

@@ -5,7 +5,7 @@ from playwright.sync_api import sync_playwright
 
 from . import url
 
-class SongListPage(NamedTuple):
+class MusicListPage(NamedTuple):
     score_pages: list[url.ScorePageParams]
 
 class ScorePage(NamedTuple):
@@ -40,8 +40,8 @@ class Client:
     def closed(self) -> bool:
         return self._closed
 
-    def scrape_song_list_page(self) -> SongListPage:
-        self._page.goto(url.ALL_SONG_LIST_PAGE)
+    def scrape_music_list_page(self) -> MusicListPage:
+        self._page.goto(url.ALL_MUSIC_LIST_PAGE)
         score_links = self._page.get_by_role(
             'link', name=re.compile(r'^(1P|2P|DP)$')
         )
@@ -49,7 +49,7 @@ class Client:
             'links => links.map(link => link.href)'
         )
         score_pages = list(map(url.ScorePageParams.from_url, score_urls))
-        return SongListPage(score_pages)
+        return MusicListPage(score_pages)
 
     def scrape_score_page(self, url_params: url.ScorePageParams) -> ScorePage:
         self._page.goto(url_params.to_url())
