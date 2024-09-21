@@ -19,7 +19,7 @@ p_scrape_song_list.add_argument('-w', '--overwrite', action='store_true',
 
 p_scrape_score.add_argument('play_side', nargs='?', type=str)
 p_scrape_score.add_argument('version', nargs='?', type=str)
-p_scrape_score.add_argument('song_id', nargs='?', type=str)
+p_scrape_score.add_argument('song_tag', nargs='?', type=str)
 p_scrape_score.add_argument('score_kind', nargs='?', type=str)
 
 p_analyze.add_argument('-a', '--show-all', action='store_true',
@@ -33,7 +33,7 @@ match args.subcommand:
     case 'scrape_score':
         # TODO: 引数のバリデーション
         scrape_score(
-            args.play_side, args.version, args.song_id, args.score_kind
+            args.play_side, args.version, args.song_tag, args.score_kind
         )
     case 'analyze':
         analyze(show_all=args.show_all)

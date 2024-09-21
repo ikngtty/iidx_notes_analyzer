@@ -16,14 +16,14 @@ def scrape_song_list(overwrites: bool = False) -> None:
 # TODO: 引数全部指定されてたら、譜面ページリストにデータがなくてもレベル0にして
 # 譜面取りに行ってくるようにしたい
 def scrape_score(
-    play_side: str, version: str, song_id: str, score_kind: str
+    play_side: str, version: str, song_tag: str, score_kind: str
 ) -> None:
     all_pages = persistence.load_score_pages()
     target_pages = [
         p for p in all_pages
         if not play_side or p.play_side == play_side
         if not version or p.version == version
-        if not song_id or p.song_id == song_id
+        if not song_tag or p.song_tag == song_tag
         if not score_kind or p.score_kind == score_kind
     ]
 
@@ -34,7 +34,7 @@ def scrape_score(
         for page_index, page_params in enumerate(target_pages):
             does_skip = persistence.has_saved_notes(
                 page_params.play_side, page_params.version,
-                page_params.song_id, page_params.score_kind
+                page_params.song_tag, page_params.score_kind
             )
 
             # スクレイピング先のサーバーへの負荷を下げるために1秒間隔を空ける
@@ -46,7 +46,7 @@ def scrape_score(
             page_text =\
                 f'{page_params.play_side} '\
                 f'VER:{page_params.version} '\
-                f'{page_params.song_id} '\
+                f'{page_params.song_tag} '\
                 f'({page_params.score_kind})'
             print(
                 f'Scraping {page_index + 1}/{len(target_pages)} {page_text} ...',
@@ -63,7 +63,7 @@ def scrape_score(
             notes.sort()
             persistence.save_notes(
                 page_params.play_side, page_params.version,
-                page_params.song_id, page_params.score_kind,
+                page_params.song_tag, page_params.score_kind,
                 notes
             )
 
@@ -75,7 +75,7 @@ def analyze(show_all: bool = False) -> None:
         score for score in persistence.load_score_pages()
         if persistence.has_saved_notes(
             score.play_side, score.version,
-            score.song_id, score.score_kind,
+            score.song_tag, score.score_kind,
         )
     ]
     print(f'Found {len(target_scores)} scores.')
@@ -84,7 +84,7 @@ def analyze(show_all: bool = False) -> None:
     for score in target_scores:
         notes = persistence.load_notes(
             score.play_side, score.version,
-            score.song_id, score.score_kind,
+            score.song_tag, score.score_kind,
         )
         chords = util.to_chords(notes)
         chord_counts += Counter(chords)

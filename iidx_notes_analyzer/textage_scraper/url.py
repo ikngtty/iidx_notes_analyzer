@@ -11,7 +11,7 @@ ALL_SONG_LIST_PAGE = SONG_LIST_PAGE + '?a001B000'
 
 class ScorePageParams(NamedTuple):
     version: str
-    song_id: str
+    song_tag: str
     play_side: iidx.PlaySide
     score_kind: iidx.ScoreKind
     level: iidx.Level
@@ -21,7 +21,7 @@ class ScorePageParams(NamedTuple):
     @classmethod
     def from_url(cls, url: str) -> Self:
         pattern = re.compile(
-            HOST + r'score/(?P<ver>[^/]+)/(?P<id>[^\.]+).html'
+            HOST + r'score/(?P<ver>[^/]+)/(?P<tag>[^\.]+).html'
             r'\?(?P<side>.)(?P<kind>.)(?P<level>.)00'
         )
         m = pattern.fullmatch(url)
@@ -29,19 +29,19 @@ class ScorePageParams(NamedTuple):
             raise ValueError(url)
 
         version = m.group('ver')
-        song_id = m.group('id')
+        song_tag = m.group('tag')
         play_side = cls.decode_play_side(m.group('side'))
         score_kind = cls.decode_score_kind(m.group('kind'))
         level = cls.decode_level(m.group('level'))
-        return cls(version, song_id, play_side, score_kind, level)
+        return cls(version, song_tag, play_side, score_kind, level)
 
     def to_url(self) -> str:
         ver = self.version
-        id = self.song_id
+        tag = self.song_tag
         side = self.encode_play_side(self.play_side)
         kind = self.encode_score_kind(self.score_kind)
         level = self.encode_level(self.level)
-        return HOST + f'score/{ver}/{id}.html?{side}{kind}{level}00'
+        return HOST + f'score/{ver}/{tag}.html?{side}{kind}{level}00'
 
     @classmethod
     def encode_play_side(cls, play_side: iidx.PlaySide) -> str:
