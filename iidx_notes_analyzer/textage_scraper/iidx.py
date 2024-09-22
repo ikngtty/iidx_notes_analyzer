@@ -22,6 +22,7 @@ class Score(NamedTuple):
     music_tag: str
     kind: ScoreKind
     level: Level
+    has_URL: bool
 
 class Music(NamedTuple):
     tag: str

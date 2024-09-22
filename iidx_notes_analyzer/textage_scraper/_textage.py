@@ -113,7 +113,9 @@ class MusicTable:
 def to_arcade_musics(arcadeMusicTable: MusicTable) -> list[iidx.Music]:
     return [
         iidx.Music(tag=music_tag, scores={
-            score_kind: iidx.Score(music_tag, score_kind, score.level)
+            score_kind: iidx.Score(
+                music_tag, score_kind, score.level, score.option.has_URL
+            )
             for score_kind, score in row.scores.items()
             if score and score.option.in_arcade
         })
