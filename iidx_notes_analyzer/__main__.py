@@ -20,7 +20,7 @@ p_scrape_music_list.add_argument('-w', '--overwrite', action='store_true',
 p_scrape_score.add_argument('play_side', nargs='?', type=str)
 p_scrape_score.add_argument('version', nargs='?', type=str)
 p_scrape_score.add_argument('music_tag', nargs='?', type=str)
-p_scrape_score.add_argument('score_kind', nargs='?', type=str)
+p_scrape_score.add_argument('difficulty', nargs='?', type=str)
 
 p_analyze.add_argument('-a', '--show-all', action='store_true',
     help='show all chord patterns even if its count is 0',
@@ -33,7 +33,7 @@ match args.subcommand:
     case 'scrape_score':
         # TODO: 引数のバリデーション
         scrape_score(
-            args.play_side, args.version, args.music_tag, args.score_kind
+            args.play_side, args.version, args.music_tag, args.difficulty
         )
     case 'analyze':
         analyze(show_all=args.show_all)

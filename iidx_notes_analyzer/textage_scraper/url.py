@@ -13,7 +13,7 @@ class ScorePageParams(NamedTuple):
     version: str
     music_tag: str
     play_side: iidx.PlaySide
-    score_kind: iidx.ScoreKind
+    difficulty: iidx.Difficulty
     level: iidx.Level
 
     _LEVEL_CODES = '123456789ABC'
@@ -22,7 +22,7 @@ class ScorePageParams(NamedTuple):
     def from_url(cls, url: str) -> Self:
         pattern = re.compile(
             HOST + r'score/(?P<ver>[^/]+)/(?P<tag>[^\.]+).html'
-            r'\?(?P<side>.)(?P<kind>.)(?P<level>.)00'
+            r'\?(?P<side>.)(?P<diff>.)(?P<level>.)00'
         )
         m = pattern.fullmatch(url)
         if not m:
@@ -31,17 +31,17 @@ class ScorePageParams(NamedTuple):
         version = m.group('ver')
         music_tag = m.group('tag')
         play_side = cls.decode_play_side(m.group('side'))
-        score_kind = cls.decode_score_kind(m.group('kind'))
+        difficulty = cls.decode_difficulty(m.group('diff'))
         level = cls.decode_level(m.group('level'))
-        return cls(version, music_tag, play_side, score_kind, level)
+        return cls(version, music_tag, play_side, difficulty, level)
 
     def to_url(self) -> str:
         ver = self.version
         tag = self.music_tag
         side = self.encode_play_side(self.play_side)
-        kind = self.encode_score_kind(self.score_kind)
+        diff = self.encode_difficulty(self.difficulty)
         level = self.encode_level(self.level)
-        return HOST + f'score/{ver}/{tag}.html?{side}{kind}{level}00'
+        return HOST + f'score/{ver}/{tag}.html?{side}{diff}{level}00'
 
     @classmethod
     def encode_play_side(cls, play_side: iidx.PlaySide) -> str:
@@ -68,8 +68,8 @@ class ScorePageParams(NamedTuple):
                 raise ValueError(code)
 
     @classmethod
-    def encode_score_kind(cls, score_kind: iidx.ScoreKind) -> str:
-        match score_kind:
+    def encode_difficulty(cls, difficulty: iidx.Difficulty) -> str:
+        match difficulty:
             case 'B':
                 return 'P'
             case 'N':
@@ -81,10 +81,10 @@ class ScorePageParams(NamedTuple):
             case 'L':
                 return 'X'
             case _:
-                raise ValueError(score_kind)
+                raise ValueError(difficulty)
 
     @classmethod
-    def decode_score_kind(cls, code: str) -> iidx.ScoreKind:
+    def decode_difficulty(cls, code: str) -> iidx.Difficulty:
         match code:
             case 'P':
                 return 'B'

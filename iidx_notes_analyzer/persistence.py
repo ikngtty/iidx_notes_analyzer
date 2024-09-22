@@ -31,30 +31,30 @@ def _get_notes_dir_path(play_side: iidx.PlaySide, version: str) -> str:
 
 def _get_notes_file_path(
     play_side: iidx.PlaySide, version: str,
-    music_tag: str, score_kind: iidx.ScoreKind,
+    music_tag: str, difficulty: iidx.Difficulty,
 ) -> str:
     dir = _get_notes_dir_path(play_side, version)
-    filename = f'{music_tag}({score_kind}).json'
+    filename = f'{music_tag}({difficulty}).json'
     return os.path.join(dir, filename)
 
 def has_saved_notes(
     play_side: iidx.PlaySide, version: str,
-    music_tag: str, score_kind: iidx.ScoreKind,
+    music_tag: str, difficulty: iidx.Difficulty,
 ) -> bool:
     file_path = _get_notes_file_path(
-        play_side, version, music_tag, score_kind
+        play_side, version, music_tag, difficulty
     )
     return os.path.exists(file_path)
 
 def save_notes(
     play_side: iidx.PlaySide, version: str,
-    music_tag: str, score_kind: iidx.ScoreKind,
+    music_tag: str, difficulty: iidx.Difficulty,
     notes: list[int],
 ) -> None:
     os.makedirs(_get_notes_dir_path(play_side, version), exist_ok=True)
 
     file_path = _get_notes_file_path(
-        play_side, version, music_tag, score_kind
+        play_side, version, music_tag, difficulty
     )
     if os.path.exists(file_path):
         raise FileExistsError(file_path)
@@ -64,10 +64,10 @@ def save_notes(
 
 def load_notes(
     play_side: iidx.PlaySide, version: str,
-    music_tag: str, score_kind: iidx.ScoreKind,
+    music_tag: str, difficulty: iidx.Difficulty,
 ) -> list[int]:
     file_path = _get_notes_file_path(
-        play_side, version, music_tag, score_kind
+        play_side, version, music_tag, difficulty
     )
     with open(file_path) as f:
         return json.load(f)
