@@ -28,7 +28,7 @@ class ScorePageParams(NamedTuple):
         if not m:
             raise ValueError(url)
 
-        version = m.group('ver')
+        version = cls.decode_version(m.group('ver'))
         music_tag = m.group('tag')
         play_side = cls.decode_play_side(m.group('side'))
         difficulty = cls.decode_difficulty(m.group('diff'))
@@ -36,12 +36,23 @@ class ScorePageParams(NamedTuple):
         return cls(version, music_tag, play_side, difficulty, level)
 
     def to_url(self) -> str:
-        ver = self.version
+        ver = self.encode_version(self.version)
         tag = self.music_tag
         side = self.encode_play_side(self.play_side)
         diff = self.encode_difficulty(self.difficulty)
         level = self.encode_level(self.level)
         return HOST + f'score/{ver}/{tag}.html?{side}{diff}{level}00'
+
+    @classmethod
+    def encode_version(cls, version: str) -> str:
+        assert iidx.PATTERN_FOR_VERSION.fullmatch(version)
+        return '0' if version == '' else version
+
+    @classmethod
+    def decode_version(cls, code: str) -> str:
+        version = '' if code == '0' else code
+        assert iidx.PATTERN_FOR_VERSION.fullmatch(version)
+        return version
 
     @classmethod
     def encode_play_side(cls, play_side: iidx.PlaySide) -> str:
