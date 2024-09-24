@@ -33,4 +33,8 @@ class Score(NamedTuple):
 
 class Music(NamedTuple):
     tag: str
+    version: str
+    genre: str
+    artist: str
+    title: str
     scores: dict[ScoreKind, Score]

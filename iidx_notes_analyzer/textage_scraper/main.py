@@ -60,8 +60,10 @@ class Client:
         self._page.goto(url.ALL_WHOLE_MUSIC_LIST_PAGE)
         row_arcade_music_table: _textage.RawMusicTable = self._page.evaluate('actbl')
         arcade_music_table = _textage.MusicTable(row_arcade_music_table)
+        row_title_table: _textage.RawMusicTitleTable = self._page.evaluate('titletbl')
+        title_table = _textage.MusicTitleTable(row_title_table)
 
-        musics = _textage.to_arcade_musics(arcade_music_table)
+        musics = _textage.to_arcade_musics(arcade_music_table, title_table)
 
         return MusicListPage(musics, score_pages)
 

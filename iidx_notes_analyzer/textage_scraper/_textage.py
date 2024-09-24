@@ -108,17 +108,96 @@ class MusicTable:
     def rows(self) -> dict[str, MusicTableRow]:
         return {k: MusicTableRow(v) for k, v in self._raw.items()}
 
+RawMusicTitleTableRow = list[int | str]
+class MusicTitleTableRow:
+    def __init__(self, raw: RawMusicTitleTableRow) -> None:
+        assert len(raw) == 6 or len(raw) == 7
+        self._raw = raw
+
+    @property
+    def version(self) -> str:
+        raw = self._raw[0]
+        assert isinstance(raw, int)
+
+        v = '' if raw == 0 else\
+            's' if raw == 35 else\
+            str(raw)
+        assert iidx.PATTERN_FOR_VERSION.fullmatch(v)
+        return v
+
+    @property
+    def genre(self) -> str:
+        raw = self._raw[3]
+        assert isinstance(raw, str)
+        return raw
+
+    @property
+    def artist(self) -> str:
+        raw = self._raw[4]
+        assert isinstance(raw, str)
+        return raw
+
+    @property
+    def title(self) -> str:
+        raw = self._raw[5]
+        assert isinstance(raw, str)
+        return raw
+
+    @property
+    def subtitle(self) -> str:
+        if len(self._raw) < 7:
+            return ''
+
+        raw = self._raw[6]
+        assert isinstance(raw, str)
+        return raw
+
+RawMusicTitleTable = dict[str, RawMusicTitleTableRow]
+class MusicTitleTable:
+    def __init__(self, raw: RawMusicTitleTable) -> None:
+        self._raw = raw
+
+    def row(self, tag: str) -> MusicTitleTableRow | None:
+        if tag not in self._raw:
+            return None
+
+        raw = self._raw[tag]
+        return MusicTitleTableRow(raw)
+
+    @property
+    def rows(self) -> dict[str, MusicTitleTableRow]:
+        return {k: MusicTitleTableRow(v) for k, v in self._raw.items()}
+
 # TexTage解析に最適化されたデータ型から汎用的なデータ型へ変換。
 # Current Ver.表示時の絞り込みロジックを模倣。
-def to_arcade_musics(arcadeMusicTable: MusicTable) -> list[iidx.Music]:
-    return [
-        iidx.Music(tag=music_tag, scores={
+def to_arcade_musics(
+    arcadeMusicTable: MusicTable,
+    titleTable: MusicTitleTable,
+) -> list[iidx.Music]:
+    iidx_musics = []
+    for music_tag, row in arcadeMusicTable.rows.items():
+        if not row.option.in_arcade:
+            continue
+
+        titleRow = titleTable.row(music_tag)
+        if not titleRow:
+            raise RuntimeError('not found in music title table: ' + music_tag)
+
+        iidx_scores = {
             score_kind: iidx.Score(
                 music_tag, score_kind, score.level, score.option.has_URL
             )
             for score_kind, score in row.scores.items()
             if score and score.option.in_arcade
-        })
-        for music_tag, row in arcadeMusicTable.rows.items()
-        if row.option.in_arcade
-    ]
+        }
+
+        iidx_musics.append(iidx.Music(
+            music_tag,
+            titleRow.version,
+            titleRow.genre,
+            titleRow.artist,
+            titleRow.title + titleRow.subtitle + row.italic_subtitle,
+            iidx_scores,
+        ))
+
+    return iidx_musics
