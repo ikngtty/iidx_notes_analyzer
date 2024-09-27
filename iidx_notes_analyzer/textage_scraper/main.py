@@ -55,7 +55,6 @@ class Client:
         score_pages = []
         sp_diffs: list[iidx.Difficulty] = ['L', 'A', 'H', 'N', 'B']
         dp_diffs: list[iidx.Difficulty] = ['N', 'H', 'A', 'L']
-        sp_sides: list[iidx.PlaySide] = ['1P', '2P']
         for music in musics:
             for diff in sp_diffs:
                 if ('SP', diff) not in music.scores:
@@ -63,14 +62,13 @@ class Client:
                 score = music.scores[('SP', diff)]
                 if not score.has_URL:
                     continue
-                for side in sp_sides:
-                    score_pages.append(url.ScorePageParams(
-                        music.version,
-                        music.tag,
-                        side,
-                        diff,
-                        score.level,
-                    ))
+                score_pages.append(url.ScorePageParams(
+                    music.version,
+                    music.tag,
+                    '1P',
+                    diff,
+                    score.level,
+                ))
             for diff in dp_diffs:
                 if ('DP', diff) not in music.scores:
                     continue
