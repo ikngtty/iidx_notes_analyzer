@@ -41,12 +41,12 @@ def scrape_score(
                 sleep(1)
                 has_scraped = False
 
-            page_params = url.ScorePageParams.from_score(music, score)
             page_text =\
-                f'{page_params.play_side} '\
-                f'VER:{page_params.version} '\
-                f'{page_params.music_tag} '\
-                f'({page_params.difficulty})'
+                f'{score.kind.play_mode} '\
+                f'VER:{music.version} '\
+                f'[{music.tag}] '\
+                f'{music.title} '\
+                f'({score.kind.difficulty})'
             print(
                 f'Scraping {score_index + 1}/{len(target_music_scores)} {page_text} ...',
                 end='', flush=True
@@ -56,6 +56,7 @@ def scrape_score(
                 print('skipped.')
                 continue
 
+            page_params = url.ScorePageParams.from_score(music, score)
             page = scraper.scrape_score_page(page_params)
             has_scraped = True
             notes = page.notes

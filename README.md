@@ -144,22 +144,22 @@ python -m iidx_notes_analyzer scrape_score SP 5 '' A
 
 ```console
 Found 16 scores.
-Scraping 1/16 1P VER:5 abyss (A) ...finished.
-Scraping 2/16 1P VER:5 inmyeyes (A) ...finished.
-Scraping 3/16 1P VER:5 loveage (A) ...finished.
-Scraping 4/16 1P VER:5 outwall (A) ...finished.
-Scraping 5/16 1P VER:5 qqq (A) ...finished.
-Scraping 6/16 1P VER:5 radical (A) ...finished.
-Scraping 7/16 1P VER:5 real (A) ...finished.
-Scraping 8/16 1P VER:5 regulus (A) ...finished.
-Scraping 9/16 1P VER:5 rideon (A) ...finished.
-Scraping 10/16 1P VER:5 sometm27 (A) ...finished.
-Scraping 11/16 1P VER:5 spin (A) ...finished.
-Scraping 12/16 1P VER:5 stheart (A) ...finished.
-Scraping 13/16 1P VER:5 sync (A) ...finished.
-Scraping 14/16 1P VER:5 thecube (A) ...finished.
-Scraping 15/16 1P VER:5 tpola_17 (A) ...finished.
-Scraping 16/16 1P VER:5 v_taka (A) ...finished.
+Scraping 1/16 SP VER:5 [abyss] Abyss (A) ...finished.
+Scraping 2/16 SP VER:5 [inmyeyes] in my eyes (A) ...finished.
+Scraping 3/16 SP VER:5 [loveage] LOVE AGAIN TONIGHT～for Mellisa mix～ (A) ...finished.
+Scraping 4/16 SP VER:5 [outwall] outer wall (A) ...finished.
+Scraping 5/16 SP VER:5 [qqq] QQQ (A) ...finished.
+Scraping 6/16 SP VER:5 [radical] Radical Faith (A) ...finished.
+Scraping 7/16 SP VER:5 [real] Real (A) ...finished.
+Scraping 8/16 SP VER:5 [regulus] Regulus (A) ...finished.
+Scraping 9/16 SP VER:5 [rideon] RIDE ON THE LIGHT(HI GREAT MIX) (A) ...finished.
+Scraping 10/16 SP VER:5 [sometm27] sometime (A) ...finished.
+Scraping 11/16 SP VER:5 [spin] Spin the disc (A) ...finished.
+Scraping 12/16 SP VER:5 [stheart] STILL IN MY HEART (A) ...finished.
+Scraping 13/16 SP VER:5 [sync] sync (A) ...finished.
+Scraping 14/16 SP VER:5 [thecube] THE CUBE (A) ...finished.
+Scraping 15/16 SP VER:5 [tpola_17] THE SHINING POLARIS (A) ...finished.
+Scraping 16/16 SP VER:5 [v_taka] V (A) ...finished.
 ```
 
 解析を実行します。
