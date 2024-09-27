@@ -54,7 +54,7 @@ class Client:
 
         score_pages = []
         for music in musics:
-            score_pages += url.score_pages_for_music(music).values()
+            score_pages += url.score_pages_for_music(music)
 
         return MusicListPage(musics, score_pages)
 

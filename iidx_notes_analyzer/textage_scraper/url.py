@@ -145,11 +145,9 @@ class ScorePageParams(NamedTuple):
         assert iidx.is_valid_for_level(level)
         return level
 
-def score_pages_for_music(music: iidx.Music)\
-    -> dict[iidx.ScoreKind, ScorePageParams]:
-
-    return {
-        kind: ScorePageParams.from_score(music, score)
-        for kind, score in music.scores.items()
+def score_pages_for_music(music: iidx.Music) -> list[ScorePageParams]:
+    return [
+        ScorePageParams.from_score(music, score)
+        for score in music.scores
         if score.has_URL
-    }
+    ]

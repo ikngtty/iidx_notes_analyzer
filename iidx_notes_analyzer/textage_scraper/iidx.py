@@ -66,4 +66,4 @@ class Music(NamedTuple):
     genre: str
     artist: str
     title: str
-    scores: dict[ScoreKind, Score]
+    scores: list[Score]

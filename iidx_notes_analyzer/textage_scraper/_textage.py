@@ -183,13 +183,13 @@ def to_arcade_musics(
         if not titleRow:
             raise RuntimeError('not found in music title table: ' + music_tag)
 
-        iidx_scores = {
-            score_kind: iidx.Score(
+        iidx_scores = [
+            iidx.Score(
                 music_tag, score_kind, score.level, score.option.has_URL
             )
             for score_kind, score in row.scores.items()
             if score and score.option.in_arcade
-        }
+        ]
 
         iidx_musics.append(iidx.Music(
             music_tag,
