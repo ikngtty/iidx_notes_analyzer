@@ -55,25 +55,25 @@ class MusicTableRow:
             # `self._raw[1]`, `self._raw[2]`についてはSBo（譜面）と書かれていた。
             # BEGINNERの亜種みたいなのを示しているっぽい。
             # ACで出る以前にCSで出てた譜面の違うBEGINNERを示している？
-            case ('SP', 'B'):
+            case iidx.ScoreKind('SP', 'B'):
                 level, option = self._raw[3], self._raw[4]
-            case ('SP', 'N'):
+            case iidx.ScoreKind('SP', 'N'):
                 level, option = self._raw[5], self._raw[6]
-            case ('SP', 'H'):
+            case iidx.ScoreKind('SP', 'H'):
                 level, option = self._raw[7], self._raw[8]
-            case ('SP', 'A'):
+            case iidx.ScoreKind('SP', 'A'):
                 level, option = self._raw[9], self._raw[10]
-            case ('SP', 'L'):
+            case iidx.ScoreKind('SP', 'L'):
                 level, option = self._raw[11], self._raw[12]
-            case ('DP', 'B'):
+            case iidx.ScoreKind('DP', 'B'):
                 level, option = self._raw[13], self._raw[14]
-            case ('DP', 'N'):
+            case iidx.ScoreKind('DP', 'N'):
                 level, option = self._raw[15], self._raw[16]
-            case ('DP', 'H'):
+            case iidx.ScoreKind('DP', 'H'):
                 level, option = self._raw[17], self._raw[18]
-            case ('DP', 'A'):
+            case iidx.ScoreKind('DP', 'A'):
                 level, option = self._raw[19], self._raw[20]
-            case ('DP', 'L'):
+            case iidx.ScoreKind('DP', 'L'):
                 level, option = self._raw[21], self._raw[22]
             case _:
                 raise ValueError(kind)
@@ -88,7 +88,7 @@ class MusicTableRow:
 
     @property
     def scores(self) -> dict[iidx.ScoreKind, Score | None]:
-        return {kind: self.score(kind) for kind in iidx.all_score_kinds()}
+        return {kind: self.score(kind) for kind in iidx.ScoreKind.all()}
 
     @property
     def italic_subtitle(self) -> str:

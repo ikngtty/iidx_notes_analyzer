@@ -59,7 +59,7 @@ class Client:
             for diff in sp_diffs:
                 if ('SP', diff) not in music.scores:
                     continue
-                score = music.scores[('SP', diff)]
+                score = music.scores[iidx.ScoreKind('SP', diff)]
                 if not score.has_URL:
                     continue
                 score_pages.append(url.ScorePageParams(
@@ -72,7 +72,7 @@ class Client:
             for diff in dp_diffs:
                 if ('DP', diff) not in music.scores:
                     continue
-                score = music.scores[('DP', diff)]
+                score = music.scores[iidx.ScoreKind('DP', diff)]
                 if not score.has_URL:
                     continue
                 score_pages.append(url.ScorePageParams(
