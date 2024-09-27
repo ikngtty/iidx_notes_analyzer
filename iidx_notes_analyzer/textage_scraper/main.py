@@ -53,35 +53,8 @@ class Client:
         musics = _textage.to_arcade_musics(arcade_music_table, title_table)
 
         score_pages = []
-        sp_diffs: list[iidx.Difficulty] = ['L', 'A', 'H', 'N', 'B']
-        dp_diffs: list[iidx.Difficulty] = ['N', 'H', 'A', 'L']
         for music in musics:
-            for diff in sp_diffs:
-                if ('SP', diff) not in music.scores:
-                    continue
-                score = music.scores[iidx.ScoreKind('SP', diff)]
-                if not score.has_URL:
-                    continue
-                score_pages.append(url.ScorePageParams(
-                    music.version,
-                    music.tag,
-                    '1P',
-                    diff,
-                    score.level,
-                ))
-            for diff in dp_diffs:
-                if ('DP', diff) not in music.scores:
-                    continue
-                score = music.scores[iidx.ScoreKind('DP', diff)]
-                if not score.has_URL:
-                    continue
-                score_pages.append(url.ScorePageParams(
-                    music.version,
-                    music.tag,
-                    'DP',
-                    diff,
-                    score.level,
-                ))
+            score_pages += url.score_pages_for_music(music).values()
 
         return MusicListPage(musics, score_pages)
 

@@ -18,6 +18,24 @@ class ScorePageParams(NamedTuple):
     _LEVEL_CODES = '123456789ABC'
 
     @classmethod
+    def from_score(cls, music: iidx.Music, score: iidx.Score) -> Self:
+        match score.kind.play_mode:
+            case 'SP':
+                play_side = '1P'
+            case 'DP':
+                play_side = 'DP'
+            case _:
+                raise ValueError(score)
+
+        return cls(
+            music.version,
+            music.tag,
+            play_side,
+            score.kind.difficulty,
+            score.level,
+        )
+
+    @classmethod
     def from_url(cls, url: str) -> Self:
         pattern = re.compile(
             HOST + r'score/(?P<ver>[^/]+)/(?P<tag>[^\.]+).html'
@@ -126,3 +144,12 @@ class ScorePageParams(NamedTuple):
         level = pos + 1
         assert iidx.is_valid_for_level(level)
         return level
+
+def score_pages_for_music(music: iidx.Music)\
+    -> dict[iidx.ScoreKind, ScorePageParams]:
+
+    return {
+        kind: ScorePageParams.from_score(music, score)
+        for kind, score in music.scores.items()
+        if score.has_URL
+    }
