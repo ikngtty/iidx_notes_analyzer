@@ -1,5 +1,5 @@
 import re
-from typing import NamedTuple, Self
+from typing import Literal, NamedTuple, Self, TypeGuard
 
 from . import iidx
 
@@ -8,10 +8,14 @@ HOST = 'https://textage.cc/'
 MUSIC_LIST_PAGE = HOST + 'score/index.html'
 ALL_MUSIC_LIST_PAGE = MUSIC_LIST_PAGE + '?a011B000' # Whole Ver.（削除曲等を含む）
 
+PlaySide = Literal['1P', '2P', 'DP']
+def is_valid_for_play_side(s: str) -> TypeGuard[PlaySide]:
+    return s in ['1P', '2P', 'DP']
+
 class ScorePageParams(NamedTuple):
     version: str
     music_tag: str
-    play_side: iidx.PlaySide
+    play_side: PlaySide
     difficulty: iidx.Difficulty
     level: iidx.Level
 
@@ -72,7 +76,7 @@ class ScorePageParams(NamedTuple):
         return version
 
     @classmethod
-    def encode_play_side(cls, play_side: iidx.PlaySide) -> str:
+    def encode_play_side(cls, play_side: PlaySide) -> str:
         match play_side:
             case '1P':
                 return '1'
@@ -84,7 +88,7 @@ class ScorePageParams(NamedTuple):
                 raise ValueError(play_side)
 
     @classmethod
-    def decode_play_side(cls, code: str) -> iidx.PlaySide:
+    def decode_play_side(cls, code: str) -> PlaySide:
         match code:
             case '1':
                 return '1P'

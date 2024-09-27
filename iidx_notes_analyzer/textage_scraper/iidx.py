@@ -1,10 +1,6 @@
 import re
 from typing import Literal, NamedTuple, Self, TypeGuard
 
-PlaySide = Literal['1P', '2P', 'DP']
-def is_valid_for_play_side(s: str) -> TypeGuard[PlaySide]:
-    return s in ['1P', '2P', 'DP']
-
 PlayMode = Literal['SP', 'DP']
 def is_valid_for_play_mode(s: str) -> TypeGuard[PlayMode]:
     return s in ['SP', 'DP']
