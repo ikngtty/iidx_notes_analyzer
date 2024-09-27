@@ -1,5 +1,3 @@
-import re
-from time import sleep
 from typing import Any, NamedTuple, Self
 
 from playwright.sync_api import sync_playwright
@@ -43,27 +41,49 @@ class Client:
         return self._closed
 
     def scrape_music_list_page(self) -> MusicListPage:
-        # Current Ver.表示時の曲（譜面）を対象とする。
-        self._page.goto(url.ALL_MUSIC_LIST_PAGE)
-        score_links = self._page.get_by_role(
-            'link', name=re.compile(r'^(1P|2P|DP)$')
-        )
-        score_urls = score_links.evaluate_all(
-            'links => links.map(link => link.href)'
-        )
-        score_pages = list(map(url.ScorePageParams.from_url, score_urls))
-
         # Current Ver.表示で開くと、曲データが中途半端に書き換えられてしまう。
         # そのためWhole Ver.表示で曲データを落としてから、
         # Current Ver.表示時のコードを模倣してデータを絞り込む。
-        sleep(1)
-        self._page.goto(url.ALL_WHOLE_MUSIC_LIST_PAGE)
+        self._page.goto(url.ALL_MUSIC_LIST_PAGE)
         row_arcade_music_table: _textage.RawMusicTable = self._page.evaluate('actbl')
         arcade_music_table = _textage.MusicTable(row_arcade_music_table)
         row_title_table: _textage.RawMusicTitleTable = self._page.evaluate('titletbl')
         title_table = _textage.MusicTitleTable(row_title_table)
 
         musics = _textage.to_arcade_musics(arcade_music_table, title_table)
+
+        score_pages = []
+        sp_diffs: list[iidx.Difficulty] = ['L', 'A', 'H', 'N', 'B']
+        dp_diffs: list[iidx.Difficulty] = ['N', 'H', 'A', 'L']
+        sp_sides: list[iidx.PlaySide] = ['1P', '2P']
+        for music in musics:
+            for diff in sp_diffs:
+                if ('SP', diff) not in music.scores:
+                    continue
+                score = music.scores[('SP', diff)]
+                if not score.has_URL:
+                    continue
+                for side in sp_sides:
+                    score_pages.append(url.ScorePageParams(
+                        music.version,
+                        music.tag,
+                        side,
+                        diff,
+                        score.level,
+                    ))
+            for diff in dp_diffs:
+                if ('DP', diff) not in music.scores:
+                    continue
+                score = music.scores[('DP', diff)]
+                if not score.has_URL:
+                    continue
+                score_pages.append(url.ScorePageParams(
+                    music.version,
+                    music.tag,
+                    'DP',
+                    diff,
+                    score.level,
+                ))
 
         return MusicListPage(musics, score_pages)
 

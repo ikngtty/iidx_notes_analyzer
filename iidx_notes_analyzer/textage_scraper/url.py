@@ -6,8 +6,7 @@ from . import iidx
 HOST = 'https://textage.cc/'
 
 MUSIC_LIST_PAGE = HOST + 'score/index.html'
-ALL_MUSIC_LIST_PAGE = MUSIC_LIST_PAGE + '?a001B000'         # Current Ver.
-ALL_WHOLE_MUSIC_LIST_PAGE = MUSIC_LIST_PAGE + '?a011B000'   # Whole Ver.（削除曲等を含む）
+ALL_MUSIC_LIST_PAGE = MUSIC_LIST_PAGE + '?a011B000' # Whole Ver.（削除曲等を含む）
 
 class ScorePageParams(NamedTuple):
     version: str
