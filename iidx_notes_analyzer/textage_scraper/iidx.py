@@ -2,14 +2,38 @@ import re
 from typing import Literal, NamedTuple, Self, TypeGuard
 
 PlaySide = Literal['1P', '2P', 'DP']
+def is_valid_for_play_side(s: str) -> TypeGuard[PlaySide]:
+    return s in ['1P', '2P', 'DP']
 
 PlayMode = Literal['SP', 'DP']
+def is_valid_for_play_mode(s: str) -> TypeGuard[PlayMode]:
+    return s in ['SP', 'DP']
 
 Difficulty = Literal['B', 'N', 'H', 'A', 'L']
+def is_valid_for_difficulty(s: str) -> TypeGuard[Difficulty]:
+    return s in ['B', 'N', 'H', 'A', 'L']
 
 class ScoreKind(NamedTuple):
     play_mode: PlayMode
     difficulty: Difficulty
+
+    @classmethod
+    def from_str(cls, s: str) -> Self:
+        if len(s) != 3:
+            raise ValueError(s)
+
+        play_mode = s[:1]
+        if not is_valid_for_play_mode(play_mode):
+            raise ValueError(s)
+
+        difficulty = s[2]
+        if not is_valid_for_difficulty(difficulty):
+            raise ValueError(s)
+
+        return cls(play_mode, difficulty)
+
+    def __str__(self) -> str:
+        return self.play_mode + self.difficulty
 
     @classmethod
     def all(cls) -> list[Self]:
