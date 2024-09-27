@@ -31,35 +31,31 @@ def load_musics() -> list[iidx.Music]:
         ]) for m in raw_musics
     ]
 
-def _get_notes_dir_path(play_side: iidx.PlaySide, version: str) -> str:
-    return os.path.join(_DATA_DIR_PATH, 'notes', play_side, version)
+def _get_notes_dir_path(play_mode: iidx.PlayMode, version: str) -> str:
+    return os.path.join(_DATA_DIR_PATH, 'notes', play_mode, version)
 
 def _get_notes_file_path(
-    play_side: iidx.PlaySide, version: str,
+    play_mode: iidx.PlayMode, version: str,
     music_tag: str, difficulty: iidx.Difficulty,
 ) -> str:
-    dir = _get_notes_dir_path(play_side, version)
+    dir = _get_notes_dir_path(play_mode, version)
     filename = f'{music_tag}({difficulty}).json'
     return os.path.join(dir, filename)
 
-def has_saved_notes(
-    play_side: iidx.PlaySide, version: str,
-    music_tag: str, difficulty: iidx.Difficulty,
-) -> bool:
+def has_saved_notes(music: iidx.Music, score: iidx.Score) -> bool:
     file_path = _get_notes_file_path(
-        play_side, version, music_tag, difficulty
+        score.kind.play_mode, music.version, music.tag, score.kind.difficulty
     )
     return os.path.exists(file_path)
 
-def save_notes(
-    play_side: iidx.PlaySide, version: str,
-    music_tag: str, difficulty: iidx.Difficulty,
-    notes: list[int],
-) -> None:
-    os.makedirs(_get_notes_dir_path(play_side, version), exist_ok=True)
+def save_notes(music: iidx.Music, score: iidx.Score, notes: list[int]) -> None:
+    os.makedirs(
+        _get_notes_dir_path(score.kind.play_mode, music.version),
+        exist_ok=True,
+    )
 
     file_path = _get_notes_file_path(
-        play_side, version, music_tag, difficulty
+        score.kind.play_mode, music.version, music.tag, score.kind.difficulty
     )
     if os.path.exists(file_path):
         raise FileExistsError(file_path)
@@ -67,12 +63,9 @@ def save_notes(
     with open(file_path, 'w') as f:
         json.dump(notes, f)
 
-def load_notes(
-    play_side: iidx.PlaySide, version: str,
-    music_tag: str, difficulty: iidx.Difficulty,
-) -> list[int]:
+def load_notes(music: iidx.Music, score: iidx.Score) -> list[int]:
     file_path = _get_notes_file_path(
-        play_side, version, music_tag, difficulty
+        score.kind.play_mode, music.version, music.tag, score.kind.difficulty
     )
     with open(file_path) as f:
         return json.load(f)
