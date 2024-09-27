@@ -2,13 +2,12 @@ from collections import Counter
 from time import sleep
 
 from . import persistence, util
-from .textage_scraper import main as textage
+from .textage_scraper import url, main as textage
 
 def scrape_music_list(overwrites: bool = False) -> None:
     with textage.Client() as scraper:
         page = scraper.scrape_music_list_page()
-        score_pages = page.score_pages
-        persistence.save_score_pages(score_pages, overwrites=overwrites)
+        persistence.save_musics(page.musics, overwrites=overwrites)
 
 # TODO: 引数の型を具体化したい
 # TODO: プレイサイド（1P）よりプレイモード（SP）にしたい
@@ -18,7 +17,12 @@ def scrape_music_list(overwrites: bool = False) -> None:
 def scrape_score(
     play_side: str, version: str, music_tag: str, difficulty: str
 ) -> None:
-    all_pages = persistence.load_score_pages()
+    all_musics = persistence.load_musics()
+
+    all_pages = []
+    for music in all_musics:
+        all_pages += url.score_pages_for_music(music)
+
     target_pages = [
         p for p in all_pages
         if not play_side or p.play_side == play_side
@@ -70,9 +74,15 @@ def scrape_score(
             print('finished.')
 
 def analyze(show_all: bool = False) -> None:
+    all_musics = persistence.load_musics()
+
+    all_pages = []
+    for music in all_musics:
+        all_pages += url.score_pages_for_music(music)
+
     # 保存されてる譜面全てが対象
     target_scores = [
-        score for score in persistence.load_score_pages()
+        score for score in all_pages
         if persistence.has_saved_notes(
             score.play_side, score.version,
             score.music_tag, score.difficulty,

@@ -2,28 +2,33 @@ import json
 import os
 
 from .textage_scraper import iidx
-from .textage_scraper.url import ScorePageParams
 
 _DATA_DIR_PATH = 'data'
-_SCORE_PAGES_FILE_PATH = os.path.join(_DATA_DIR_PATH, 'score_pages.json')
+_MUSICS_FILE_PATH = os.path.join(_DATA_DIR_PATH, 'musics.json')
 
 # TODO: json.load()でAnyの値を取り回してるのでもっと厳格にしたい
 
-def save_score_pages(scores: list[ScorePageParams], overwrites: bool = False):
+def save_musics(musics: list[iidx.Music], overwrites: bool = False):
     os.makedirs(_DATA_DIR_PATH, exist_ok=True)
 
-    if not overwrites and os.path.exists(_SCORE_PAGES_FILE_PATH):
-        raise FileExistsError(_SCORE_PAGES_FILE_PATH)
+    if not overwrites and os.path.exists(_MUSICS_FILE_PATH):
+        raise FileExistsError(_MUSICS_FILE_PATH)
 
-    with open(_SCORE_PAGES_FILE_PATH, 'w') as f:
-        json.dump(scores, f)
+    with open(_MUSICS_FILE_PATH, 'w') as f:
+        # TODO: 配列ではなくオブジェクトで保存したい
+        json.dump(musics, f)
 
-def load_score_pages() -> list[ScorePageParams]:
-    with open(_SCORE_PAGES_FILE_PATH) as f:
-        score_page_param_lists = json.load(f)
+def load_musics() -> list[iidx.Music]:
+    with open(_MUSICS_FILE_PATH) as f:
+        raw_musics = json.load(f)
 
+    # TODO: JSONDecoderみたいなの作って隔離
     return [
-        ScorePageParams(*param_list) for param_list in score_page_param_lists
+        iidx.Music(m[0], m[1], m[2], m[3], m[4], [
+            iidx.Score(
+                s[0], iidx.ScoreKind(*s[1]), s[2], s[3]
+            ) for s in m[5]
+        ]) for m in raw_musics
     ]
 
 def _get_notes_dir_path(play_side: iidx.PlaySide, version: str) -> str:

@@ -6,7 +6,6 @@ from . import _textage, iidx, url
 
 class MusicListPage(NamedTuple):
     musics: list[iidx.Music]
-    score_pages: list[url.ScorePageParams]
 
 class ScorePage(NamedTuple):
     notes: list[int]
@@ -51,12 +50,7 @@ class Client:
         title_table = _textage.MusicTitleTable(row_title_table)
 
         musics = _textage.to_arcade_musics(arcade_music_table, title_table)
-
-        score_pages = []
-        for music in musics:
-            score_pages += url.score_pages_for_music(music)
-
-        return MusicListPage(musics, score_pages)
+        return MusicListPage(musics)
 
     def scrape_score_page(self, url_params: url.ScorePageParams) -> ScorePage:
         self._page.goto(url_params.to_url())
