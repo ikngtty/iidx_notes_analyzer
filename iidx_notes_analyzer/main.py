@@ -10,25 +10,26 @@ def scrape_music_list(overwrites: bool = False) -> None:
         persistence.save_musics(page.musics, overwrites=overwrites)
 
 # TODO: 引数の型を具体化したい
-# TODO: プレイサイド（1P）よりプレイモード（SP）にしたい
-# （2P譜面へのアクセスもやめられる）
 # TODO: 引数全部指定されてたら、譜面ページリストにデータがなくてもレベル0にして
 # 譜面取りに行ってくるようにしたい
 def scrape_score(
-    play_side: str, version: str, music_tag: str, difficulty: str
+    play_mode: str, version: str, music_tag: str, difficulty: str
 ) -> None:
     all_musics = persistence.load_musics()
-
-    all_pages = []
-    for music in all_musics:
-        all_pages += url.score_pages_for_music(music)
-
+    # TODO: 検索はpersistenceでやりたい
+    target_music_scores = sum((
+        [
+            (music, score) for score in music.scores
+            if score.has_URL
+            if not play_mode or score.kind.play_mode == play_mode
+            if not difficulty or score.kind.difficulty == difficulty
+        ] for music in all_musics
+        if not version or music.version == version
+        if not music_tag or music.tag == music_tag
+    ), [])
     target_pages = [
-        p for p in all_pages
-        if not play_side or p.play_side == play_side
-        if not version or p.version == version
-        if not music_tag or p.music_tag == music_tag
-        if not difficulty or p.difficulty == difficulty
+        url.ScorePageParams.from_score(music, score)
+        for music, score in target_music_scores
     ]
 
     print(f'Found {len(target_pages)} scores.')

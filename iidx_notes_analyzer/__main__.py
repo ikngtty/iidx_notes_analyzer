@@ -17,7 +17,7 @@ p_scrape_music_list.add_argument('-w', '--overwrite', action='store_true',
     help='overwrite the text file to save scraping results',
 )
 
-p_scrape_score.add_argument('play_side', nargs='?', type=str)
+p_scrape_score.add_argument('play_mode', nargs='?', type=str)
 p_scrape_score.add_argument('version', nargs='?', type=str)
 p_scrape_score.add_argument('music_tag', nargs='?', type=str)
 p_scrape_score.add_argument('difficulty', nargs='?', type=str)
@@ -33,7 +33,7 @@ match args.subcommand:
     case 'scrape_score':
         # TODO: 引数のバリデーション
         scrape_score(
-            args.play_side, args.version, args.music_tag, args.difficulty
+            args.play_mode, args.version, args.music_tag, args.difficulty
         )
     case 'analyze':
         analyze(show_all=args.show_all)

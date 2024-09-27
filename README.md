@@ -102,13 +102,13 @@ python -m iidx_notes_analyzer scrape_music_list --overwrite
 # AC全曲を一気に（非常に時間がかかるので、条件を絞る方がオススメ）
 python -m iidx_notes_analyzer scrape_score
 # SPのみ
-python -m iidx_notes_analyzer scrape_score 1P
+python -m iidx_notes_analyzer scrape_score SP
 # SPかつIIDX REDのみ
-python -m iidx_notes_analyzer scrape_score 1P 11
+python -m iidx_notes_analyzer scrape_score SP 11
 # SPかつAAのみ（曲に対応するIDはTexTageのURLを元に自分で調べてください）
-python -m iidx_notes_analyzer scrape_score 1P 11 aa_amuro
+python -m iidx_notes_analyzer scrape_score SP 11 aa_amuro
 # AA(SPA)のみ
-python -m iidx_notes_analyzer scrape_score 1P 11 aa_amuro A
+python -m iidx_notes_analyzer scrape_score SP 11 aa_amuro A
 # 全曲のDPAのみ
 python -m iidx_notes_analyzer scrape_score DP '' '' A
 ```
@@ -131,7 +131,7 @@ python -m iidx_notes_analyzer analyze --show-all
 保存した譜面データを分析し、結果を表示します。
 
 とりあえず、保存された全譜面について、全ての同時押しパターンの個数を集計し、表示するところまで作りました。\
-DP譜面の集計とかするとカス（プレイサイドのことを考えてない）なので、とりあえず1P譜面だけスクレイピングして実行することをお勧めします。
+DP譜面の集計とかするとカス（プレイサイドのことを考えてない）なので、とりあえずSP譜面だけスクレイピングして実行することをお勧めします。
 
 ## 実行結果
 
@@ -139,7 +139,7 @@ DP譜面の集計とかするとカス（プレイサイドのことを考えて
 
 ```console
 python -m iidx_notes_analyzer scrape_music_list
-python -m iidx_notes_analyzer scrape_score 1P 5 '' A
+python -m iidx_notes_analyzer scrape_score SP 5 '' A
 ```
 
 ```console
