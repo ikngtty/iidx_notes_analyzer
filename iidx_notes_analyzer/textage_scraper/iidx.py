@@ -1,6 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 import re
-from typing import Literal, NamedTuple, Self, TypeGuard
+from typing import Any, Literal, NamedTuple, Self, TypeGuard
 
 PlayMode = Literal['SP', 'DP']
 def is_valid_for_play_mode(s: str) -> TypeGuard[PlayMode]:
@@ -58,6 +58,19 @@ class Score:
     level: Level
     has_URL: bool
 
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> Self:
+        # TODO: validate
+        return cls(
+            d['music_tag'],
+            ScoreKind(*d['kind']),
+            d['level'],
+            d['has_URL'],
+        )
+
+    def as_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
 @dataclass(frozen=True, slots=True)
 class Music:
     tag: str
@@ -66,3 +79,18 @@ class Music:
     artist: str
     title: str
     scores: list[Score]
+
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> Self:
+        # TODO: validate
+        return cls(
+            d['tag'],
+            d['version'],
+            d['genre'],
+            d['artist'],
+            d['title'],
+            [Score.from_dict(score) for score in d['scores']],
+        )
+
+    def as_dict(self) -> dict[str, Any]:
+        return asdict(self)
