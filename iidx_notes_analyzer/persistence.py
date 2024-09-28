@@ -1,3 +1,4 @@
+import dataclasses
 import json
 import os
 
@@ -14,9 +15,10 @@ def save_musics(musics: list[iidx.Music], overwrites: bool = False):
     if not overwrites and os.path.exists(_MUSICS_FILE_PATH):
         raise FileExistsError(_MUSICS_FILE_PATH)
 
+    # TODO: musicがdataclassであることはここでは意識したくない
+    dict_musics = [dataclasses.asdict(music) for music in musics]
     with open(_MUSICS_FILE_PATH, 'w') as f:
-        # TODO: 配列ではなくオブジェクトで保存したい
-        json.dump(musics, f)
+        json.dump(dict_musics, f)
 
 def load_musics() -> list[iidx.Music]:
     with open(_MUSICS_FILE_PATH) as f:
@@ -24,11 +26,17 @@ def load_musics() -> list[iidx.Music]:
 
     # TODO: JSONDecoderみたいなの作って隔離
     return [
-        iidx.Music(m[0], m[1], m[2], m[3], m[4], [
-            iidx.Score(
-                s[0], iidx.ScoreKind(*s[1]), s[2], s[3]
-            ) for s in m[5]
-        ]) for m in raw_musics
+        iidx.Music(
+            m['tag'], m['version'], m['genre'], m['artist'], m['title'],
+            [
+                iidx.Score(
+                    s['music_tag'],
+                    iidx.ScoreKind(*s['kind']),
+                    s['level'],
+                    s['has_URL'],
+                ) for s in m['scores']
+            ],
+        ) for m in raw_musics
     ]
 
 def _get_notes_dir_path(play_mode: iidx.PlayMode, version: str) -> str:

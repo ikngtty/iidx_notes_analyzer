@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import re
 from typing import Literal, NamedTuple, Self, TypeGuard
 
@@ -50,13 +51,15 @@ def is_valid_for_level(num: int) -> TypeGuard[Level]:
 # 数字（1〜）：番号に対応するバージョン
 PATTERN_FOR_VERSION = re.compile('|s|[1-9][0-9]*')
 
-class Score(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class Score:
     music_tag: str
     kind: ScoreKind
     level: Level
     has_URL: bool
 
-class Music(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class Music:
     tag: str
     version: str
     genre: str
