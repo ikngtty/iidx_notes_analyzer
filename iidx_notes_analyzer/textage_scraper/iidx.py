@@ -19,7 +19,7 @@ class ScoreKind(NamedTuple):
         if len(s) != 3:
             raise ValueError(s)
 
-        play_mode = s[:1]
+        play_mode = s[:2]
         if not is_valid_for_play_mode(play_mode):
             raise ValueError(s)
 
