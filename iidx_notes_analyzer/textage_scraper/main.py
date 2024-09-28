@@ -1,13 +1,16 @@
-from typing import Any, NamedTuple, Self
+from dataclasses import dataclass
+from typing import Any, Self
 
 from playwright.sync_api import sync_playwright
 
 from . import _textage, iidx, url
 
-class MusicListPage(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class MusicListPage:
     musics: list[iidx.Music]
 
-class ScorePage(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class ScorePage:
     notes: list[int]
 
 class Client:

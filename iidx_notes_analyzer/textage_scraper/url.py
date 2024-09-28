@@ -1,5 +1,6 @@
+from dataclasses import dataclass
 import re
-from typing import Literal, NamedTuple, Self, TypeGuard
+from typing import Literal, Self, TypeGuard
 
 from . import iidx
 
@@ -12,7 +13,8 @@ PlaySide = Literal['1P', '2P', 'DP']
 def is_valid_for_play_side(s: str) -> TypeGuard[PlaySide]:
     return s in ['1P', '2P', 'DP']
 
-class ScorePageParams(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class ScorePageParams:
     version: str
     music_tag: str
     play_side: PlaySide

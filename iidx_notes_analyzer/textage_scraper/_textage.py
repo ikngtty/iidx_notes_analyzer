@@ -1,4 +1,5 @@
-from typing import Literal, NamedTuple
+from dataclasses import dataclass
+from typing import Literal
 
 from . import iidx
 
@@ -24,7 +25,8 @@ class ScoreOption:
 
     # `self._raw & 8`はCN関係っぽい
 
-class Score(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class Score:
     kind: iidx.ScoreKind
     level: iidx.Level
     option: ScoreOption
