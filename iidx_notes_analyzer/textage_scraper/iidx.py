@@ -1,4 +1,4 @@
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 import re
 from typing import Any, Literal, NamedTuple, Self, TypeGuard
 
@@ -63,13 +63,20 @@ class Score:
         # TODO: validate
         return cls(
             d['music_tag'],
-            ScoreKind(*d['kind']),
+            ScoreKind.from_str(d['kind']),
             d['level'],
             d['has_URL'],
         )
 
     def as_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        # 譜面種別は文字列の方が見やすいので文字列で扱う。
+        # そのため、`dataclasses.asdict()`は使用しない。
+        return {
+            'music_tag': self.music_tag,
+            'kind': str(self.kind),
+            'level': self.level,
+            'has_URL': self.has_URL,
+        }
 
 @dataclass(frozen=True, slots=True)
 class Music:
@@ -93,4 +100,11 @@ class Music:
         )
 
     def as_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        return {
+            'tag': self.tag,
+            'version': self.version,
+            'genre': self.version,
+            'artist': self.artist,
+            'title': self.title,
+            'scores': [score.as_dict() for score in self.scores],
+        }
