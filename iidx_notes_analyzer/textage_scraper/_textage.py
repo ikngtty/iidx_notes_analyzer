@@ -121,7 +121,7 @@ class MusicTitleTableRow:
         raw = self._raw[0]
         assert isinstance(raw, int)
 
-        v = '' if raw == 0 else\
+        v = 'CS' if raw == 0 else\
             's' if raw == 35 else\
             str(raw)
         assert iidx.PATTERN_FOR_VERSION.fullmatch(v)

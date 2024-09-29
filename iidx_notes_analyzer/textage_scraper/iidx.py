@@ -46,10 +46,10 @@ def is_valid_for_level(num: int) -> TypeGuard[Level]:
     return 1 <= num and num <= 12
 
 # バージョンの表記パターン
-# 空文字：収録ACバージョン無し（CS曲）
+# CS：AC未収録のためバージョン無し
 # s：substream
 # 数字（1〜）：番号に対応するバージョン
-PATTERN_FOR_VERSION = re.compile('|s|[1-9][0-9]*')
+PATTERN_FOR_VERSION = re.compile('CS|s|[1-9][0-9]*')
 
 @dataclass(frozen=True, slots=True)
 class Score:
