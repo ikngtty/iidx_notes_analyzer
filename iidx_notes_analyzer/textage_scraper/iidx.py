@@ -47,9 +47,9 @@ def is_valid_for_level(num: int) -> TypeGuard[Level]:
 
 # バージョンの表記パターン
 # CS：AC未収録のためバージョン無し
-# s：substream
+# sub：substream
 # 数字（1〜）：番号に対応するバージョン
-PATTERN_FOR_VERSION = re.compile('CS|s|[1-9][0-9]*')
+PATTERN_FOR_VERSION = re.compile('CS|sub|[1-9][0-9]*')
 
 @dataclass(frozen=True, slots=True)
 class Score:

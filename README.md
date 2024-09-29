@@ -113,7 +113,7 @@ python -m iidx_notes_analyzer scrape_score SP 11 aa_amuro A
 python -m iidx_notes_analyzer scrape_score DP '' '' A
 ```
 
-なお、Substreamは`s`です。\
+なお、substreamは`sub`です。\
 また、難易度はB, N, H, A, Lの5種類です。
 
 譜面データは`data/notes`フォルダに保存されます。

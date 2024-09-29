@@ -69,11 +69,23 @@ class ScorePageParams:
     @classmethod
     def encode_version(cls, version: str) -> str:
         assert iidx.PATTERN_FOR_VERSION.fullmatch(version)
-        return '0' if version == 'CS' else version
+        match version:
+            case 'CS':
+                return '0'
+            case 'sub':
+                return 's'
+            case _:
+                return version
 
     @classmethod
     def decode_version(cls, code: str) -> str:
-        version = 'CS' if code == '0' else code
+        match code:
+            case '0':
+                version = 'CS'
+            case 's':
+                version = 'sub'
+            case _:
+                version = code
         assert iidx.PATTERN_FOR_VERSION.fullmatch(version)
         return version
 
