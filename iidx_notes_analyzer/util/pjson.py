@@ -109,10 +109,15 @@ class _JSONChunksGeneratorObject(_JSONChunksGenerator):
         super().__init__(config)
         self._children = children
 
+    @classmethod
+    def _key_json(cls, key: str) -> str:
+        # HACK: エスケープ不要を想定
+        return f'"{key}"'
+
     def size_of_one_line(self) -> int:
         return len('{') +\
             sum(
-                len('"') + len(key) + len('"') + len(':') + child.size_of_one_line()
+                len(self._key_json(key)) + len(':') + child.size_of_one_line()
                 for key, child in self._children.items()
             ) +\
             len(',') * (max(len(self._children) - 1, 0)) +\
@@ -121,7 +126,7 @@ class _JSONChunksGeneratorObject(_JSONChunksGenerator):
     def one_line(self) -> Iterable[str]:
         yield '{'
         for i, (key, child) in enumerate(self._children.items()):
-            yield from ('"', key, '"')
+            yield self._key_json(key)
             yield ':'
             yield from child.one_line()
             if i < len(self._children) - 1:
@@ -137,7 +142,7 @@ class _JSONChunksGeneratorObject(_JSONChunksGenerator):
         yield '{\n'
         for i, (key, child) in enumerate(self._children.items()):
             yield self.make_indent(indent_level + 1)
-            yield from ('"', key, '"')
+            yield self._key_json(key)
             yield ': '
             yield from child.pretty(indent_level + 1)
             if i < len(self._children) - 1:
