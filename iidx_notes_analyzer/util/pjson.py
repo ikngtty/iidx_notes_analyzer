@@ -43,6 +43,9 @@ class _JSONChunksGenerator(ABC):
     def pretty(self, indent_level: int = 0) -> Iterable[str]:
         pass
 
+    def make_indent(self, n: int) -> str:
+        return ' ' * self._config.indent * n
+
 class _JSONChunksGeneratorAtomic(_JSONChunksGenerator):
     def __init__(
         self, config: _Config,
@@ -90,12 +93,12 @@ class _JSONChunksGeneratorArray(_JSONChunksGenerator):
 
         yield '[\n'
         for i, child in enumerate(self._children):
-            yield ' ' * self._config.indent * (indent_level + 1)
+            yield self.make_indent(indent_level + 1)
             yield from child.pretty(indent_level + 1)
             if i < len(self._children) - 1:
                 yield ','
             yield '\n'
-        yield ' ' * self._config.indent * indent_level
+        yield self.make_indent(indent_level)
         yield ']'
 
 class _JSONChunksGeneratorObject(_JSONChunksGenerator):
@@ -133,14 +136,14 @@ class _JSONChunksGeneratorObject(_JSONChunksGenerator):
 
         yield '{\n'
         for i, (key, child) in enumerate(self._children.items()):
-            yield ' ' * self._config.indent * (indent_level + 1)
+            yield self.make_indent(indent_level + 1)
             yield from ('"', key, '"')
             yield ': '
             yield from child.pretty(indent_level + 1)
             if i < len(self._children) - 1:
                 yield ','
             yield '\n'
-        yield ' ' * self._config.indent * indent_level
+        yield self.make_indent(indent_level)
         yield '}'
 
 def _make_generator(config: _Config, obj: Any) -> _JSONChunksGenerator:
