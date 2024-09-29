@@ -1,7 +1,7 @@
 import json
 import os
 
-from . import pjson
+from .util import pjson
 from .textage_scraper import iidx
 
 _DATA_DIR_PATH = 'data'

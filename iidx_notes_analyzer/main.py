@@ -1,8 +1,9 @@
 from collections import Counter
 from time import sleep
 
-from . import persistence, util
+from . import persistence
 from .textage_scraper import url, main as textage
+from .util import util
 
 def scrape_music_list(overwrites: bool = False) -> None:
     with textage.Client() as scraper:
