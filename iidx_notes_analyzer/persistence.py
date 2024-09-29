@@ -1,6 +1,7 @@
 import json
 import os
 
+from . import pjson
 from .textage_scraper import iidx
 
 _DATA_DIR_PATH = 'data'
@@ -16,7 +17,7 @@ def save_musics(musics: list[iidx.Music], overwrites: bool = False):
 
     dict_musics = [music.as_dict() for music in musics]
     with open(_MUSICS_FILE_PATH, 'w') as f:
-        json.dump(dict_musics, f)
+        pjson.dump(dict_musics, f)
 
 def load_musics() -> list[iidx.Music]:
     with open(_MUSICS_FILE_PATH) as f:
