@@ -103,7 +103,7 @@ class Music:
         return {
             'tag': self.tag,
             'version': self.version,
-            'genre': self.version,
+            'genre': self.genre,
             'artist': self.artist,
             'title': self.title,
             'scores': [score.as_dict() for score in self.scores],
