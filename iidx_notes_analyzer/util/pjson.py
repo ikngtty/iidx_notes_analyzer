@@ -40,7 +40,7 @@ class _JSONChunksGenerator(ABC):
         pass
 
     @abstractmethod
-    def pretty(self, indent_level: int = 0) -> Iterable[str]:
+    def pretty(self, cur_pos: int = 0, indent_level: int = 0) -> Iterable[str]:
         pass
 
     def make_indent(self, n: int) -> str:
@@ -60,7 +60,7 @@ class _JSONChunksGeneratorAtomic(_JSONChunksGenerator):
     def one_line(self) -> Iterable[str]:
         yield self._text
 
-    def pretty(self, indent_level: int = 0) -> Iterable[str]:
+    def pretty(self, cur_pos: int = 0, indent_level: int = 0) -> Iterable[str]:
         return self.one_line()
 
 class _JSONChunksGeneratorArray(_JSONChunksGenerator):
@@ -85,16 +85,19 @@ class _JSONChunksGeneratorArray(_JSONChunksGenerator):
                 yield ','
         yield ']'
 
-    def pretty(self, indent_level: int = 0) -> Iterable[str]:
-        # TODO: 行内での開始位置を考慮してない
-        if self.size_of_one_line() <= self._config.width:
+    def pretty(self, cur_pos: int = 0, indent_level: int = 0) -> Iterable[str]:
+        if cur_pos + self.size_of_one_line() <= self._config.width:
             yield from self.one_line()
             return
 
         yield '[\n'
         for i, child in enumerate(self._children):
-            yield self.make_indent(indent_level + 1)
-            yield from child.pretty(indent_level + 1)
+            indent = self.make_indent(indent_level + 1)
+            yield indent
+            cur_pos = len(indent)
+
+            yield from child.pretty(cur_pos, indent_level + 1)
+
             if i < len(self._children) - 1:
                 yield ','
             yield '\n'
@@ -133,18 +136,26 @@ class _JSONChunksGeneratorObject(_JSONChunksGenerator):
                 yield ','
         yield '}'
 
-    def pretty(self, indent_level: int = 0) -> Iterable[str]:
-        # TODO: 行内での開始位置を考慮してない
-        if self.size_of_one_line() <= self._config.width:
+    def pretty(self, cur_pos: int = 0, indent_level: int = 0) -> Iterable[str]:
+        if cur_pos + self.size_of_one_line() <= self._config.width:
             yield from self.one_line()
             return
 
         yield '{\n'
         for i, (key, child) in enumerate(self._children.items()):
-            yield self.make_indent(indent_level + 1)
-            yield self._key_json(key)
+            indent = self.make_indent(indent_level + 1)
+            yield indent
+            cur_pos = len(indent)
+
+            key_json = self._key_json(key)
+            yield key_json
+            cur_pos += len(key_json)
+
             yield ': '
-            yield from child.pretty(indent_level + 1)
+            cur_pos += len(': ')
+
+            yield from child.pretty(cur_pos, indent_level + 1)
+
             if i < len(self._children) - 1:
                 yield ','
             yield '\n'
