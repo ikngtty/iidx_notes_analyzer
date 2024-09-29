@@ -17,7 +17,7 @@ def save_musics(musics: list[iidx.Music], overwrites: bool = False):
 
     dict_musics = [music.as_dict() for music in musics]
     with open(_MUSICS_FILE_PATH, 'w') as f:
-        pjson.dump(dict_musics, f)
+        pjson.dump(dict_musics, f, ensure_ascii=False)
 
 def load_musics() -> list[iidx.Music]:
     with open(_MUSICS_FILE_PATH) as f:

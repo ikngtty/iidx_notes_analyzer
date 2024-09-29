@@ -6,12 +6,13 @@ from typing import Any, Iterable, TextIO
 # TODO: バリデート
 
 class _Config:
-    def __init__(self, width: int, indent: int) -> None:
+    def __init__(self, width: int, indent: int, ensure_ascii: bool) -> None:
         if indent < 0:
             raise ValueError(indent)
 
         self._width = width
         self._indent = indent
+        self._ensure_ascii = ensure_ascii
 
     @property
     def width(self) -> int:
@@ -20,6 +21,10 @@ class _Config:
     @property
     def indent(self) -> int:
         return self._indent
+
+    @property
+    def ensure_ascii(self) -> bool:
+        return self._ensure_ascii
 
 class _JSONChunksGenerator(ABC):
     def __init__(self, config: _Config) -> None:
@@ -44,7 +49,7 @@ class _JSONChunksGeneratorAtomic(_JSONChunksGenerator):
         obj: Any,
     ) -> None:
         super().__init__(config)
-        self._text = json.dumps(obj)
+        self._text = json.dumps(obj, ensure_ascii=config.ensure_ascii)
 
     def size_of_one_line(self) -> int:
         return len(self._text)
@@ -151,17 +156,17 @@ def _make_generator(config: _Config, obj: Any) -> _JSONChunksGenerator:
 
 def dump(
     obj: Any, fp: TextIO,
-    width: int = 80, indent: int = 2,
+    width: int = 80, indent: int = 2, ensure_ascii: bool = True,
 ) -> None:
-    config = _Config(width, indent)
+    config = _Config(width, indent, ensure_ascii)
     gen = _make_generator(config, obj)
     for chunk in gen.pretty():
         fp.write(chunk)
 
 def dumps(
     obj: Any,
-    width: int = 80, indent: int = 2,
+    width: int = 80, indent: int = 2, ensure_ascii: bool = True,
 ) -> str:
-    config = _Config(width, indent)
+    config = _Config(width, indent, ensure_ascii)
     gen = _make_generator(config, obj)
     return ''.join(gen.pretty())
