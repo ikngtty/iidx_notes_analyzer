@@ -25,11 +25,11 @@ def load_musics() -> list[iidx.Music]:
 
     return [iidx.Music.from_dict(raw_music) for raw_music in raw_musics]
 
-def _get_notes_dir_path(play_mode: iidx.PlayMode, version: str) -> str:
-    return os.path.join(_DATA_DIR_PATH, 'notes', play_mode, version)
+def _get_notes_dir_path(play_mode: iidx.PlayMode, version: iidx.Version) -> str:
+    return os.path.join(_DATA_DIR_PATH, 'notes', play_mode, version.value)
 
 def _get_notes_file_path(
-    play_mode: iidx.PlayMode, version: str,
+    play_mode: iidx.PlayMode, version: iidx.Version,
     music_tag: str, difficulty: iidx.Difficulty,
 ) -> str:
     dir = _get_notes_dir_path(play_mode, version)

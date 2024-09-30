@@ -117,15 +117,14 @@ class MusicTitleTableRow:
         self._raw = raw
 
     @property
-    def version(self) -> str:
+    def version(self) -> iidx.Version:
         raw = self._raw[0]
         assert isinstance(raw, int)
 
         v = 'CS' if raw == 0 else\
             'sub' if raw == 35 else\
             str(raw)
-        assert iidx.PATTERN_FOR_VERSION.fullmatch(v)
-        return v
+        return iidx.Version(v)
 
     @property
     def genre(self) -> str:

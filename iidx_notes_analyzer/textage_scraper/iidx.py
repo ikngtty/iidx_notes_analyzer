@@ -45,11 +45,21 @@ Level = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 def is_valid_for_level(num: int) -> TypeGuard[Level]:
     return 1 <= num and num <= 12
 
-# バージョンの表記パターン
-# CS：AC未収録のためバージョン無し
-# sub：substream
-# 数字（1〜）：番号に対応するバージョン
-PATTERN_FOR_VERSION = re.compile('CS|sub|[1-9][0-9]*')
+class Version:
+    # CS：AC未収録のためバージョン無し
+    # sub：substream
+    # 数字（1〜）：番号に対応するバージョン
+    PATTERN = re.compile('CS|sub|[1-9][0-9]*')
+
+    def __init__(self, value: str) -> None:
+        if not self.PATTERN.fullmatch(value):
+            raise ValueError(value)
+
+        self._value = value
+
+    @property
+    def value(self) -> str:
+        return self._value
 
 @dataclass(frozen=True, slots=True)
 class Score:
@@ -81,7 +91,7 @@ class Score:
 @dataclass(frozen=True, slots=True)
 class Music:
     tag: str
-    version: str
+    version: Version
     genre: str
     artist: str
     title: str
@@ -92,7 +102,7 @@ class Music:
         # TODO: validate
         return cls(
             d['tag'],
-            d['version'],
+            Version(d['version']),
             d['genre'],
             d['artist'],
             d['title'],
@@ -102,7 +112,7 @@ class Music:
     def as_dict(self) -> dict[str, Any]:
         return {
             'tag': self.tag,
-            'version': self.version,
+            'version': self.version.value,
             'genre': self.genre,
             'artist': self.artist,
             'title': self.title,

@@ -25,7 +25,7 @@ def scrape_score(
             if not play_mode or score.kind.play_mode == play_mode
             if not difficulty or score.kind.difficulty == difficulty
         ] for music in all_musics
-        if not version or music.version == version
+        if not version or music.version.value == version
         if not music_tag or music.tag == music_tag
     ), [])
 
@@ -44,7 +44,7 @@ def scrape_score(
 
             page_text =\
                 f'{score.kind.play_mode} '\
-                f'VER:{music.version} '\
+                f'VER:{music.version.value} '\
                 f'[{music.tag}] '\
                 f'{music.title} '\
                 f'({score.kind.difficulty})'
