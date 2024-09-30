@@ -5,6 +5,8 @@ from . import persistence
 from .textage_scraper import url, main as textage
 from .util import util
 
+# TODO: シグナルを受け付けて穏便にキャンセル終了できる機能
+
 def scrape_music_list(overwrites: bool = False) -> None:
     with textage.Client() as scraper:
         page = scraper.scrape_music_list_page()
