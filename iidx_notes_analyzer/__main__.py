@@ -1,6 +1,6 @@
 import argparse
 
-from .main import analyze, scrape_score, scrape_music_list
+from . import main
 
 p = argparse.ArgumentParser(prog='iidx_notes_analyzer')
 
@@ -31,7 +31,7 @@ match args.subcommand:
     case 'scrape_music_list':
         assert isinstance(args.overwrite, bool)
 
-        scrape_music_list(overwrites=args.overwrite)
+        main.scrape_music_list(overwrites=args.overwrite)
 
     case 'scrape_score':
         if args.play_mode is None:
@@ -56,12 +56,12 @@ match args.subcommand:
             difficulty = args.difficulty
 
         # TODO: 引数のバリデーション
-        scrape_score(play_mode, version, music_tag, difficulty)
+        main.scrape_score(play_mode, version, music_tag, difficulty)
 
     case 'analyze':
         assert isinstance(args.show_all, bool)
 
-        analyze(show_all=args.show_all)
+        main.analyze(show_all=args.show_all)
 
     case _:
         raise ValueError('unknown subcommand: ' + args.subcommand)
