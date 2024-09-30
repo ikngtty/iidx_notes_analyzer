@@ -1,8 +1,9 @@
 from collections import Counter
 from time import sleep
+from typing import Literal
 
 from . import persistence
-from .textage_scraper import url, main as textage
+from .textage_scraper import iidx, url, main as textage
 from .util import util
 
 # TODO: シグナルを受け付けて穏便にキャンセル終了できる機能
@@ -12,11 +13,13 @@ def scrape_music_list(overwrites: bool = False) -> None:
         page = scraper.scrape_music_list_page()
         persistence.save_musics(page.musics, overwrites=overwrites)
 
-# TODO: 引数の型を具体化したい
 # TODO: 引数全部指定されてたら、譜面ページリストにデータがなくてもレベル0にして
 # 譜面取りに行ってくるようにしたい
 def scrape_score(
-    play_mode: str, version: str, music_tag: str, difficulty: str
+    play_mode: iidx.PlayMode | Literal[''],
+    version: iidx.Version | None,
+    music_tag: str,
+    difficulty: iidx.Difficulty | Literal[''],
 ) -> None:
     all_musics = persistence.load_musics()
     # TODO: 検索はpersistenceでやりたい
@@ -27,7 +30,7 @@ def scrape_score(
             if not play_mode or score.kind.play_mode == play_mode
             if not difficulty or score.kind.difficulty == difficulty
         ] for music in all_musics
-        if not version or music.version.value == version
+        if not version or music.version.value == version.value # TODO: Versionのeq実装
         if not music_tag or music.tag == music_tag
     ), [])
 

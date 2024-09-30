@@ -1,6 +1,8 @@
 import argparse
+from typing import Literal
 
 from . import main
+from .textage_scraper import iidx
 
 p = argparse.ArgumentParser(prog='iidx_notes_analyzer')
 
@@ -34,28 +36,60 @@ match args.subcommand:
         main.scrape_music_list(overwrites=args.overwrite)
 
     case 'scrape_score':
+        # TODO: バリデーションエラーのメッセージを詳しく
+
+        play_mode_str: str
         if args.play_mode is None:
-            play_mode = ''
+            play_mode_str = ''
         else:
             assert isinstance(args.play_mode, str)
-            play_mode = args.play_mode
+            play_mode_str = args.play_mode
+
+        play_mode: iidx.PlayMode | Literal['']
+        if play_mode_str == '':
+            play_mode = ''
+        else:
+            if not iidx.is_valid_for_play_mode(play_mode_str):
+                raise ValueError(play_mode_str)
+            play_mode = play_mode_str
+
+        version_str: str
         if args.version is None:
-            version = ''
+            version_str = ''
         else:
             assert isinstance(args.version, str)
-            version = args.version
+            version_str = args.version
+
+        version: iidx.Version | None
+        if version_str == '':
+            version = None
+        else:
+            if not iidx.Version.PATTERN.fullmatch(version_str):
+                raise ValueError(version_str)
+            version = iidx.Version(version_str)
+
+        music_tag: str
         if args.music_tag is None:
             music_tag = ''
         else:
             assert isinstance(args.music_tag, str)
             music_tag = args.music_tag
+
+        difficulty_str: str
         if args.difficulty is None:
-            difficulty = ''
+            difficulty_str = ''
         else:
             assert isinstance(args.difficulty, str)
-            difficulty = args.difficulty
+            difficulty_str = args.difficulty
 
-        # TODO: 引数のバリデーション
+        difficulty: iidx.Difficulty | Literal['']
+        if difficulty_str == '':
+            difficulty = ''
+        else:
+            if not iidx.is_valid_for_difficulty(difficulty_str):
+                raise ValueError(difficulty_str)
+            difficulty = difficulty_str
+
         main.scrape_score(play_mode, version, music_tag, difficulty)
 
     case 'analyze':
