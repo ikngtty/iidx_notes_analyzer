@@ -1,9 +1,8 @@
 from collections import Counter
 from time import sleep
-from typing import Literal
 
-from . import persistence
-from .textage_scraper import iidx, url, main as textage
+from . import condition, persistence
+from .textage_scraper import url, main as textage
 from .util import util
 
 # TODO: シグナルを受け付けて穏便にキャンセル終了できる機能
@@ -15,23 +14,18 @@ def scrape_music_list(overwrites: bool = False) -> None:
 
 # TODO: 引数全部指定されてたら、譜面ページリストにデータがなくてもレベル0にして
 # 譜面取りに行ってくるようにしたい
-def scrape_score(
-    play_mode: iidx.PlayMode | Literal[''],
-    version: iidx.Version | None,
-    music_tag: str,
-    difficulty: iidx.Difficulty | Literal[''],
-) -> None:
+def scrape_score(cond: condition.ScoreFilter) -> None:
     all_musics = persistence.load_musics()
     # TODO: 検索はpersistenceでやりたい
     target_music_scores = sum((
         [
             (music, score) for score in music.scores
             if score.has_URL
-            if not play_mode or score.kind.play_mode == play_mode
-            if not difficulty or score.kind.difficulty == difficulty
+            if not cond.play_mode or score.kind.play_mode == cond.play_mode
+            if not cond.difficulty or score.kind.difficulty == cond.difficulty
         ] for music in all_musics
-        if not version or music.version.value == version.value # TODO: Versionのeq実装
-        if not music_tag or music.tag == music_tag
+        if not cond.version or music.version.value == cond.version.value # TODO: Versionのeq実装
+        if not cond.music_tag or music.tag == cond.music_tag
     ), [])
 
     print(f'Found {len(target_music_scores)} scores.')

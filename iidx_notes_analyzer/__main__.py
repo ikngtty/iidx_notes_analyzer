@@ -1,7 +1,7 @@
 import argparse
 from typing import Literal
 
-from . import main
+from . import condition, main
 from .textage_scraper import iidx
 
 p = argparse.ArgumentParser(prog='iidx_notes_analyzer')
@@ -90,7 +90,8 @@ match args.subcommand:
                 raise ValueError(difficulty_str)
             difficulty = difficulty_str
 
-        main.scrape_score(play_mode, version, music_tag, difficulty)
+        cond = condition.ScoreFilter(play_mode, version, music_tag, difficulty)
+        main.scrape_score(cond)
 
     case 'analyze':
         assert isinstance(args.show_all, bool)
