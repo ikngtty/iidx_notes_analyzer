@@ -29,13 +29,39 @@ p_analyze.add_argument('-a', '--show-all', action='store_true',
 args = p.parse_args()
 match args.subcommand:
     case 'scrape_music_list':
+        assert isinstance(args.overwrite, bool)
+
         scrape_music_list(overwrites=args.overwrite)
+
     case 'scrape_score':
+        if args.play_mode is None:
+            play_mode = ''
+        else:
+            assert isinstance(args.play_mode, str)
+            play_mode = args.play_mode
+        if args.version is None:
+            version = ''
+        else:
+            assert isinstance(args.version, str)
+            version = args.version
+        if args.music_tag is None:
+            music_tag = ''
+        else:
+            assert isinstance(args.music_tag, str)
+            music_tag = args.music_tag
+        if args.difficulty is None:
+            difficulty = ''
+        else:
+            assert isinstance(args.difficulty, str)
+            difficulty = args.difficulty
+
         # TODO: 引数のバリデーション
-        scrape_score(
-            args.play_mode, args.version, args.music_tag, args.difficulty
-        )
+        scrape_score(play_mode, version, music_tag, difficulty)
+
     case 'analyze':
+        assert isinstance(args.show_all, bool)
+
         analyze(show_all=args.show_all)
+
     case _:
         raise ValueError('unknown subcommand: ' + args.subcommand)
