@@ -3,7 +3,7 @@ from typing import Literal
 
 from .textage_scraper import iidx
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class ScoreFilter:
     play_mode: iidx.PlayMode | Literal['']
     version: iidx.Version | None
