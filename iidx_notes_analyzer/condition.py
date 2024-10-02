@@ -5,7 +5,7 @@ from .textage_scraper import iidx
 
 @dataclass(frozen=True, slots=True)
 class ScoreFilter:
-    play_mode: iidx.PlayMode | Literal['']
-    version: iidx.Version | None
-    music_tag: str
-    difficulty: iidx.Difficulty | Literal['']
+    play_mode: iidx.PlayMode | Literal[''] = ''
+    version: iidx.Version | None = None
+    music_tag: str = ''
+    difficulty: iidx.Difficulty | Literal[''] = ''
