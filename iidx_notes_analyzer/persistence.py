@@ -3,13 +3,11 @@ import os
 from typing import Iterator
 
 from . import condition
-from .util import pjson
+from .util import pjson, util
 from .textage_scraper import iidx
 
 _DATA_DIR_PATH = 'data'
 _MUSICS_FILE_PATH = os.path.join(_DATA_DIR_PATH, 'musics.json')
-
-# TODO: json.load()でAnyの値を取り回してるのでもっと厳格にしたい
 
 def save_musics(musics: list[iidx.Music], overwrites: bool = False):
     os.makedirs(_DATA_DIR_PATH, exist_ok=True)
@@ -23,7 +21,10 @@ def save_musics(musics: list[iidx.Music], overwrites: bool = False):
 
 def load_musics(cond: condition.ScoreFilter) -> Iterator[tuple[iidx.Music, iidx.Score]]:
     with open(_MUSICS_FILE_PATH) as f:
-        raw_musics: list[dict] = json.load(f)
+        raw_musics = json.load(f)
+        assert isinstance(raw_musics, list)
+        assert util.is_list_of_dict(raw_musics)
+        assert util.is_list_of_str_dict(raw_musics)
 
     all_musics = (iidx.Music.from_dict(raw_music) for raw_music in raw_musics)
     target_musics = (
@@ -77,5 +78,7 @@ def load_notes(music: iidx.Music, score: iidx.Score) -> Iterator[int]:
         score.kind.play_mode, music.version, music.tag, score.kind.difficulty
     )
     with open(file_path) as f:
-        notes: list[int] = json.load(f)
+        notes = json.load(f)
+        assert isinstance(notes, list)
+        assert util.is_list_of_int(notes)
     yield from notes

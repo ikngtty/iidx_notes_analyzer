@@ -1,5 +1,5 @@
 from itertools import combinations, groupby
-from typing import Iterable, Iterator
+from typing import Any, Iterable, Iterator, TypeGuard
 
 def to_chords(notes: Iterable[int]) -> Iterator[int]:
     # TODO: 1Pの譜面か2Pの譜面かを考慮してない（特にDP）
@@ -28,3 +28,16 @@ def chord_to_str(chord: int) -> str:
 
 def reversed_str(s: str) -> str:
     return s[::-1]
+
+# TODO: int以外にも使える汎用的な関数にしたい
+def is_list_of_int(l: list) -> TypeGuard[list[int]]:
+    return all(isinstance(item, int) for item in l)
+
+def is_list_of_dict(l: list) -> TypeGuard[list[dict]]:
+    return all(isinstance(item, dict) for item in l)
+
+def is_list_of_str_dict(l: list[dict]) -> TypeGuard[list[dict[str, Any]]]:
+    return all(
+        all(isinstance(key, str) for key in item)
+        for item in l
+    )
