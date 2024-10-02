@@ -15,18 +15,11 @@ def scrape_music_list(overwrites: bool = False) -> None:
 # TODO: 引数全部指定されてたら、譜面ページリストにデータがなくてもレベル0にして
 # 譜面取りに行ってくるようにしたい
 def scrape_score(cond: condition.ScoreFilter) -> None:
-    all_musics = persistence.load_musics()
-    # TODO: 検索はpersistenceでやりたい
-    target_music_scores = sum((
-        [
-            (music, score) for score in music.scores
-            if score.has_URL
-            if not cond.play_mode or score.kind.play_mode == cond.play_mode
-            if not cond.difficulty or score.kind.difficulty == cond.difficulty
-        ] for music in all_musics
-        if not cond.version or music.version == cond.version
-        if not cond.music_tag or music.tag == cond.music_tag
-    ), [])
+    # TODO: has_URLによる絞り込みもconditionやpersistenceに乗せたい
+    target_music_scores = [
+        (music, score) for music, score in persistence.load_musics(cond)
+        if score.has_URL
+    ]
 
     print(f'Found {len(target_music_scores)} scores.')
 
@@ -66,15 +59,13 @@ def scrape_score(cond: condition.ScoreFilter) -> None:
             print('finished.')
 
 def analyze(show_all: bool = False) -> None:
-    all_musics = persistence.load_musics()
     # 保存されてる譜面全てが対象
-    target_music_scores = sum((
-        [
-            (music, score) for score in music.scores
-            if score.has_URL
-            if persistence.has_saved_notes(music, score)
-        ] for music in all_musics
-    ), [])
+    all_music_scores = persistence.load_musics(condition.ScoreFilter())
+    target_music_scores = [
+        (music, score) for music, score in all_music_scores
+        if persistence.has_saved_notes(music, score)
+    ]
+
     print(f'Found {len(target_music_scores)} scores.')
 
     chord_counts = Counter()
