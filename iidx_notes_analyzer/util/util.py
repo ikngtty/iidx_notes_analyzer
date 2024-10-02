@@ -1,16 +1,13 @@
 from itertools import combinations, groupby
-from typing import Iterator
+from typing import Iterable, Iterator
 
-# TODO: listに固めずにIterableで遅延に
-def to_chords(notes: list[int]) -> list[int]:
+def to_chords(notes: Iterable[int]) -> Iterator[int]:
     # TODO: 1Pの譜面か2Pの譜面かを考慮してない（特にDP）
-    chords = []
     for _, notes_of_chord in groupby(notes, lambda note: note // 10):
         chord = 0
         for note in notes_of_chord:
             chord |= (1 << (note % 10))
-        chords.append(chord)
-    return chords
+        yield chord
 
 def all_chord_patterns() -> Iterator[int]:
     for has_scratch in [False, True]:

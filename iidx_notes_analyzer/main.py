@@ -71,7 +71,7 @@ def analyze(show_all: bool = False) -> None:
     chord_counts = Counter()
     for music, score in target_music_scores:
         notes = persistence.load_notes(music, score)
-        chords = util.to_chords(list(notes))
+        chords = util.to_chords(notes)
         chord_counts += Counter(chords)
 
     for chord in util.all_chord_patterns():
