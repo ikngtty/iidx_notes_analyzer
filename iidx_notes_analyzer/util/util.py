@@ -1,6 +1,7 @@
 from itertools import combinations, groupby
 from typing import Iterator
 
+# TODO: listに固めずにIterableで遅延に
 def to_chords(notes: list[int]) -> list[int]:
     # TODO: 1Pの譜面か2Pの譜面かを考慮してない（特にDP）
     chords = []
