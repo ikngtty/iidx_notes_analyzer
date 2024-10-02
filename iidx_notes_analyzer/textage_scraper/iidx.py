@@ -61,6 +61,11 @@ class Version:
     def value(self) -> str:
         return self._value
 
+    def __eq__(self, obj: object) -> bool:
+        if not isinstance(obj, Version):
+            return False
+        return self.value == obj.value
+
 @dataclass(frozen=True, slots=True)
 class Score:
     music_tag: str

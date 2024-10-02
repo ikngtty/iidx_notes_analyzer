@@ -24,7 +24,7 @@ def scrape_score(cond: condition.ScoreFilter) -> None:
             if not cond.play_mode or score.kind.play_mode == cond.play_mode
             if not cond.difficulty or score.kind.difficulty == cond.difficulty
         ] for music in all_musics
-        if not cond.version or music.version.value == cond.version.value # TODO: Versionのeq実装
+        if not cond.version or music.version == cond.version
         if not cond.music_tag or music.tag == cond.music_tag
     ), [])
 
