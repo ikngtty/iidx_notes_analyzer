@@ -14,7 +14,14 @@ def scrape_music_list(overwrites: bool = False) -> None:
 
 # TODO: 引数全部指定されてたら、譜面ページリストにデータがなくてもレベル0にして
 # 譜面取りに行ってくるようにしたい
-def scrape_score(cond: condition.ScoreFilter) -> None:
+def scrape_score(
+    play_mode: condition.PlayModeFilter = '',
+    version: condition.VersionFilter = None,
+    music_tag: condition.MusicTagFilter = '',
+    difficulty: condition.DifficultyFilter = '',
+) -> None:
+
+    cond = condition.ScoreFilter(play_mode, version, music_tag, difficulty)
     # TODO: has_URLによる絞り込みもconditionやpersistenceに乗せたい
     target_music_scores = [
         (music, score) for music, score in persistence.load_musics(cond)

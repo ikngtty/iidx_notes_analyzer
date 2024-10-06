@@ -90,8 +90,7 @@ match args.subcommand:
                 raise ValueError(difficulty_str)
             difficulty = difficulty_str
 
-        cond = condition.ScoreFilter(play_mode, version, music_tag, difficulty)
-        main.scrape_score(cond)
+        main.scrape_score(play_mode, version, music_tag, difficulty)
 
     case 'analyze':
         assert isinstance(args.show_all, bool)
