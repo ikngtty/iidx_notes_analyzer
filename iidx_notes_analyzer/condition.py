@@ -3,9 +3,14 @@ from typing import Literal
 
 from .textage_scraper import iidx
 
+PlayModeFilter = iidx.PlayMode | Literal['']
+VersionFilter = iidx.Version | None
+MusicTagFilter = str
+DifficultyFilter = iidx.Difficulty | Literal['']
+
 @dataclass(frozen=True, slots=True)
 class ScoreFilter:
-    play_mode: iidx.PlayMode | Literal[''] = ''
-    version: iidx.Version | None = None
-    music_tag: str = ''
-    difficulty: iidx.Difficulty | Literal[''] = ''
+    play_mode: PlayModeFilter = ''
+    version: VersionFilter = None
+    music_tag: MusicTagFilter = ''
+    difficulty: DifficultyFilter = ''

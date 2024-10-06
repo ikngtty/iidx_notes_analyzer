@@ -45,7 +45,7 @@ match args.subcommand:
             assert isinstance(args.play_mode, str)
             play_mode_str = args.play_mode
 
-        play_mode: iidx.PlayMode | Literal['']
+        play_mode: condition.PlayModeFilter
         if play_mode_str == '':
             play_mode = ''
         else:
@@ -60,7 +60,7 @@ match args.subcommand:
             assert isinstance(args.version, str)
             version_str = args.version
 
-        version: iidx.Version | None
+        version: condition.VersionFilter
         if version_str == '':
             version = None
         else:
@@ -68,7 +68,7 @@ match args.subcommand:
                 raise ValueError(version_str)
             version = iidx.Version(version_str)
 
-        music_tag: str
+        music_tag: condition.MusicTagFilter
         if args.music_tag is None:
             music_tag = ''
         else:
@@ -82,7 +82,7 @@ match args.subcommand:
             assert isinstance(args.difficulty, str)
             difficulty_str = args.difficulty
 
-        difficulty: iidx.Difficulty | Literal['']
+        difficulty: condition.DifficultyFilter
         if difficulty_str == '':
             difficulty = ''
         else:
