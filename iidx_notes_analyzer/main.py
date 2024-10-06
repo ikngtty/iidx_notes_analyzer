@@ -21,12 +21,9 @@ def scrape_score(
     difficulty: condition.DifficultyFilter = '',
 ) -> None:
 
-    cond = condition.ScoreFilter(play_mode, version, music_tag, difficulty)
-    # TODO: has_URLによる絞り込みもconditionやpersistenceに乗せたい
-    target_music_scores = [
-        (music, score) for music, score in persistence.load_musics(cond)
-        if score.has_URL
-    ]
+    has_URL: condition.HasURLFilter = True
+    cond = condition.ScoreFilter(has_URL, play_mode, version, music_tag, difficulty)
+    target_music_scores = list(persistence.load_musics(cond))
 
     print(f'Found {len(target_music_scores)} scores.')
 
