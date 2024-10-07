@@ -16,7 +16,7 @@ def scrape_music_list(overwrites: bool = False) -> None:
 # 譜面取りに行ってくるようにしたい
 def scrape_score(
     play_mode: condition.PlayModeFilter = '',
-    version: condition.VersionFilter = None,
+    version: condition.VersionFilter = condition.VersionFilterAll(),
     music_tag: condition.MusicTagFilter = '',
     difficulty: condition.DifficultyFilter = '',
 ) -> None:

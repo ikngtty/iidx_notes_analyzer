@@ -9,6 +9,36 @@ from .textage_scraper import iidx
 _DATA_DIR_PATH = 'data'
 _MUSICS_FILE_PATH = os.path.join(_DATA_DIR_PATH, 'musics.json')
 
+# TODO: Versionクラスにロジックを集めたい
+def _version_order(version: iidx.Version) -> float:
+    if version.value == 'CS':
+        raise ValueError(version)
+
+    if version.value == 'sub':
+        return 1.5
+
+    return float(version.value)
+
+def _match_version_filter(
+    music: iidx.Music,
+    cond: condition.VersionFilter,
+) -> bool:
+    if isinstance(cond, condition.VersionFilterAll):
+        return True
+
+    if isinstance(cond, condition.VersionFilterSingle):
+        return music.version == cond.value
+
+    if isinstance(cond, condition.VersionFilterRange):
+        if music.version.value == 'CS':
+            return False
+        order = _version_order(music.version)
+        match_start = cond.start is None or order >= _version_order(cond.start)
+        match_end = cond.end is None or order <= _version_order(cond.end)
+        return match_start and match_end
+
+    raise RuntimeError(cond, 'unexpected type')
+
 def save_musics(musics: list[iidx.Music], overwrites: bool = False):
     os.makedirs(_DATA_DIR_PATH, exist_ok=True)
 
@@ -29,7 +59,7 @@ def load_musics(cond: condition.ScoreFilter) -> Iterator[tuple[iidx.Music, iidx.
     all_musics = (iidx.Music.from_dict(raw_music) for raw_music in raw_musics)
     target_musics = (
         music for music in all_musics
-        if not cond.version or music.version == cond.version
+        if _match_version_filter(music, cond.version)
         if not cond.music_tag or music.tag == cond.music_tag
     )
     for music in target_musics:

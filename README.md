@@ -105,6 +105,10 @@ python -m iidx_notes_analyzer scrape_score
 python -m iidx_notes_analyzer scrape_score SP
 # SPかつIIDX REDのみ
 python -m iidx_notes_analyzer scrape_score SP 11
+# SPかつIIDX RED以降全て
+python -m iidx_notes_analyzer scrape_score SP 11-
+# SPかつIIDX REDからIIDX GOLDまで
+python -m iidx_notes_analyzer scrape_score SP 11-14
 # SPかつAAのみ（曲に対応するIDはTexTageのURLを元に自分で調べてください）
 python -m iidx_notes_analyzer scrape_score SP 11 aa_amuro
 # AA(SPA)のみ

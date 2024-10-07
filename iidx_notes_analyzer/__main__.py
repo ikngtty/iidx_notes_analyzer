@@ -61,12 +61,10 @@ match args.subcommand:
             version_str = args.version
 
         version: condition.VersionFilter
-        if version_str == '':
-            version = None
-        else:
-            if not iidx.Version.PATTERN.fullmatch(version_str):
-                raise ValueError(version_str)
-            version = iidx.Version(version_str)
+        try:
+            version = condition.parse_version_filter(version_str)
+        except ValueError as e:
+            raise e
 
         music_tag: condition.MusicTagFilter
         if args.music_tag is None:
