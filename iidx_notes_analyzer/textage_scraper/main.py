@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Self
 
-from playwright.sync_api import sync_playwright
+import playwright.sync_api as playwright
 
 from . import _textage, iidx, url
 
@@ -14,8 +14,13 @@ class ScorePage:
     notes: list[int]
 
 class Client:
+    _playwright: playwright.Playwright
+    _browser: playwright.Browser
+    _page: playwright.Page
+    _closed: bool
+
     def __init__(self) -> None:
-        self._playwright = sync_playwright().start()
+        self._playwright = playwright.sync_playwright().start()
         self._browser = self._playwright.chromium.launch()
         self._page = self._browser.new_page()
         self._closed = False

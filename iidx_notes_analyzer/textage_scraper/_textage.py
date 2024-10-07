@@ -8,6 +8,8 @@ Level = NoLevel | iidx.Level
 
 RawScoreOption = int
 class ScoreOption:
+    _raw: RawScoreOption
+
     def __init__(self, raw: RawScoreOption) -> None:
         self._raw = raw
 
@@ -33,6 +35,8 @@ class Score:
 
 RawMusicOption = int
 class MusicOption:
+    _raw: RawMusicOption
+
     def __init__(self, raw: RawMusicOption) -> None:
         self._raw = raw
 
@@ -42,6 +46,8 @@ class MusicOption:
 
 RawMusicTableRow = list[RawMusicOption | Level | RawScoreOption | str]
 class MusicTableRow:
+    _raw: RawMusicTableRow
+
     def __init__(self, raw: RawMusicTableRow) -> None:
         assert len(raw) == 23 or len(raw) == 24
         self._raw = raw
@@ -103,6 +109,8 @@ class MusicTableRow:
 
 RawMusicTable = dict[str, RawMusicTableRow]
 class MusicTable:
+    _raw: RawMusicTable
+
     def __init__(self, raw: RawMusicTable) -> None:
         self._raw = raw
 
@@ -112,6 +120,8 @@ class MusicTable:
 
 RawMusicTitleTableRow = list[int | str]
 class MusicTitleTableRow:
+    _raw: RawMusicTitleTableRow
+
     def __init__(self, raw: RawMusicTitleTableRow) -> None:
         assert len(raw) == 6 or len(raw) == 7
         self._raw = raw
@@ -155,6 +165,8 @@ class MusicTitleTableRow:
 
 RawMusicTitleTable = dict[str, RawMusicTitleTableRow]
 class MusicTitleTable:
+    _raw: RawMusicTitleTable
+
     def __init__(self, raw: RawMusicTitleTable) -> None:
         self._raw = raw
 

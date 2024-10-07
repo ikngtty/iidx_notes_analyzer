@@ -46,6 +46,8 @@ def is_valid_for_level(num: int) -> TypeGuard[Level]:
     return 1 <= num and num <= 12
 
 class Version:
+    _value: str
+
     # CS：AC未収録のためバージョン無し
     # sub：substream
     # 数字（1〜）：番号に対応するバージョン

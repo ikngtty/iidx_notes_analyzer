@@ -6,6 +6,10 @@ from typing import Any, Iterable, TextIO
 # TODO: バリデート
 
 class _Config:
+    _width: int
+    _indent: int
+    _ensure_ascii: bool
+
     def __init__(self, width: int, indent: int, ensure_ascii: bool) -> None:
         if indent < 0:
             raise ValueError(indent)
@@ -27,6 +31,8 @@ class _Config:
         return self._ensure_ascii
 
 class _JSONChunksGenerator(ABC):
+    _config: _Config
+
     def __init__(self, config: _Config) -> None:
         super().__init__()
         self._config = config
@@ -47,6 +53,8 @@ class _JSONChunksGenerator(ABC):
         return ' ' * self._config.indent * n
 
 class _JSONChunksGeneratorAtomic(_JSONChunksGenerator):
+    _text: str
+
     def __init__(
         self, config: _Config,
         obj: Any,
@@ -64,6 +72,8 @@ class _JSONChunksGeneratorAtomic(_JSONChunksGenerator):
         return self.one_line()
 
 class _JSONChunksGeneratorArray(_JSONChunksGenerator):
+    _children: list[_JSONChunksGenerator]
+
     def __init__(
         self, config: _Config,
         children: list[_JSONChunksGenerator],
@@ -105,6 +115,8 @@ class _JSONChunksGeneratorArray(_JSONChunksGenerator):
         yield ']'
 
 class _JSONChunksGeneratorObject(_JSONChunksGenerator):
+    _children: dict[str, _JSONChunksGenerator]
+
     def __init__(
         self, config: _Config,
         children: dict[str, _JSONChunksGenerator],
