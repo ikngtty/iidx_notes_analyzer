@@ -5,9 +5,14 @@ from typing import Literal
 from .textage_scraper import iidx
 
 HasURLFilter = bool | None
+
 PlayModeFilter = iidx.PlayMode | Literal['']
-MusicTagFilter = str
-DifficultyFilter = iidx.Difficulty | Literal['']
+def parse_play_mode_filter(s: str) -> PlayModeFilter:
+    if s == '':
+        return ''
+    if not iidx.is_valid_for_play_mode(s):
+        raise ValueError(s)
+    return s
 
 class VersionFilter(ABC):
     pass
@@ -82,6 +87,16 @@ def parse_version_filter(s: str) -> VersionFilter:
 
         case _:
             raise ValueError(s)
+
+MusicTagFilter = str
+
+DifficultyFilter = iidx.Difficulty | Literal['']
+def parse_difficulty_filter(s: str) -> DifficultyFilter:
+    if s == '':
+        return ''
+    if not iidx.is_valid_for_difficulty(s):
+        raise ValueError(s)
+    return s
 
 @dataclass(frozen=True, slots=True)
 class ScoreFilter:

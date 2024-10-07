@@ -46,12 +46,10 @@ match args.subcommand:
             play_mode_str = args.play_mode
 
         play_mode: condition.PlayModeFilter
-        if play_mode_str == '':
-            play_mode = ''
-        else:
-            if not iidx.is_valid_for_play_mode(play_mode_str):
-                raise ValueError(play_mode_str)
-            play_mode = play_mode_str
+        try:
+            play_mode = condition.parse_play_mode_filter(play_mode_str)
+        except ValueError as e:
+            raise e
 
         version_str: str
         if args.version is None:
@@ -66,12 +64,14 @@ match args.subcommand:
         except ValueError as e:
             raise e
 
-        music_tag: condition.MusicTagFilter
+        music_tag_str: str
         if args.music_tag is None:
-            music_tag = ''
+            music_tag_str = ''
         else:
             assert isinstance(args.music_tag, str)
-            music_tag = args.music_tag
+            music_tag_str = args.music_tag
+
+        music_tag: condition.MusicTagFilter = music_tag_str
 
         difficulty_str: str
         if args.difficulty is None:
@@ -81,12 +81,10 @@ match args.subcommand:
             difficulty_str = args.difficulty
 
         difficulty: condition.DifficultyFilter
-        if difficulty_str == '':
-            difficulty = ''
-        else:
-            if not iidx.is_valid_for_difficulty(difficulty_str):
-                raise ValueError(difficulty_str)
-            difficulty = difficulty_str
+        try:
+            difficulty = condition.parse_difficulty_filter(difficulty_str)
+        except ValueError as e:
+            raise e
 
         main.scrape_score(play_mode, version, music_tag, difficulty)
 
