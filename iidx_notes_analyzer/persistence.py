@@ -13,20 +13,22 @@ def _match_version_filter(
     music: iidx.Music,
     cond: condition.VersionFilter,
 ) -> bool:
-    if isinstance(cond, condition.VersionFilterAll):
-        return True
+    match cond:
+        case condition.VersionFilterAll():
+            return True
 
-    if isinstance(cond, condition.VersionFilterSingle):
-        return music.version == cond.value
+        case condition.VersionFilterSingle():
+            return music.version == cond.value
 
-    if isinstance(cond, condition.VersionFilterRange):
-        if not isinstance(music.version, iidx.VersionAC):
-            return False
-        match_start = cond.start is None or music.version >= cond.start
-        match_end = cond.end is None or music.version <= cond.end
-        return match_start and match_end
+        case condition.VersionFilterRange():
+            if not isinstance(music.version, iidx.VersionAC):
+                return False
+            match_start = cond.start is None or music.version >= cond.start
+            match_end = cond.end is None or music.version <= cond.end
+            return match_start and match_end
 
-    raise ValueError('unexpected type: ' + str(type(cond)))
+        case _:
+            raise ValueError('unexpected type: ' + str(type(cond)))
 
 def save_musics(musics: list[iidx.Music], overwrites: bool = False):
     os.makedirs(_DATA_DIR_PATH, exist_ok=True)

@@ -175,15 +175,17 @@ class _JSONChunksGeneratorObject(_JSONChunksGenerator):
         yield '}'
 
 def _make_generator(config: _Config, obj: Any) -> _JSONChunksGenerator:
-    if isinstance(obj, dict):
-        return _JSONChunksGeneratorObject(config, {
-            k: _make_generator(config, v) for k, v in obj.items()
-        })
-    if isinstance(obj, list) or isinstance(obj, tuple):
-        return _JSONChunksGeneratorArray(config, [
-            _make_generator(config, e) for e in obj
-        ])
-    return _JSONChunksGeneratorAtomic(config, obj)
+    match obj:
+        case dict():
+            return _JSONChunksGeneratorObject(config, {
+                k: _make_generator(config, v) for k, v in obj.items()
+            })
+        case list() | tuple():
+            return _JSONChunksGeneratorArray(config, [
+                _make_generator(config, e) for e in obj
+            ])
+        case _:
+            return _JSONChunksGeneratorAtomic(config, obj)
 
 def dump(
     obj: Any, fp: TextIO,
