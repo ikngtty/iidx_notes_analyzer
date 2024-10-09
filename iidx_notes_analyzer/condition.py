@@ -42,7 +42,7 @@ class VersionFilterRange(VersionFilter):
     ) -> None:
         super().__init__()
         if start is not None and end is not None and start > end:
-            raise ValueError(start, end)
+            raise ValueError(str(start), str(end))
         self._start = start
         self._end = end
 
@@ -80,7 +80,7 @@ def parse_version_filter(s: str) -> VersionFilter:
             if start is None and end is None:
                 raise ValueError(s)
             if start is not None and end is not None and start > end:
-                raise ValueError(start, end)
+                raise ValueError(str(start), str(end))
             return VersionFilterRange(start, end)
 
         case _:
