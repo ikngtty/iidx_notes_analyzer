@@ -41,9 +41,10 @@ class VersionFilterRange(VersionFilter):
         end: iidx.VersionAC | None,
     ) -> None:
         super().__init__()
+        if start is not None and end is not None and start > end:
+            raise ValueError(start, end)
         self._start = start
         self._end = end
-        # TODO: start>endの場合を弾く
 
     @property
     def start(self) -> iidx.VersionAC | None:
@@ -78,6 +79,8 @@ def parse_version_filter(s: str) -> VersionFilter:
             s_start, s_end = map(to_version, ss)
             if s_start is None and s_end is None:
                 raise ValueError(s)
+            if s_start is not None and s_end is not None and s_start > s_end:
+                raise ValueError(s_start, s_end)
             return VersionFilterRange(s_start, s_end)
 
         case _:
