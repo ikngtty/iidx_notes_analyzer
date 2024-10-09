@@ -9,16 +9,6 @@ from .textage_scraper import iidx
 _DATA_DIR_PATH = 'data'
 _MUSICS_FILE_PATH = os.path.join(_DATA_DIR_PATH, 'musics.json')
 
-# TODO: Versionクラスにロジックを集めたい
-def _version_order(version: iidx.Version) -> float:
-    if version.value == 'CS':
-        raise ValueError(version)
-
-    if version.value == 'sub':
-        return 1.5
-
-    return float(version.value)
-
 def _match_version_filter(
     music: iidx.Music,
     cond: condition.VersionFilter,
@@ -30,11 +20,10 @@ def _match_version_filter(
         return music.version == cond.value
 
     if isinstance(cond, condition.VersionFilterRange):
-        if music.version.value == 'CS':
+        if not isinstance(music.version, iidx.VersionAC):
             return False
-        order = _version_order(music.version)
-        match_start = cond.start is None or order >= _version_order(cond.start)
-        match_end = cond.end is None or order <= _version_order(cond.end)
+        match_start = cond.start is None or music.version >= cond.start
+        match_end = cond.end is None or music.version <= cond.end
         return match_start and match_end
 
     raise RuntimeError(cond, 'unexpected type')
@@ -73,7 +62,7 @@ def load_musics(cond: condition.ScoreFilter) -> Iterator[tuple[iidx.Music, iidx.
             yield (music, score)
 
 def _get_notes_dir_path(play_mode: iidx.PlayMode, version: iidx.Version) -> str:
-    return os.path.join(_DATA_DIR_PATH, 'notes', play_mode, version.value)
+    return os.path.join(_DATA_DIR_PATH, 'notes', play_mode, version.code)
 
 def _get_notes_file_path(
     play_mode: iidx.PlayMode, version: iidx.Version,

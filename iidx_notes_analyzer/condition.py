@@ -32,32 +32,25 @@ class VersionFilterSingle(VersionFilter):
         return self._value
 
 class VersionFilterRange(VersionFilter):
-    _start: iidx.Version | None
-    _end: iidx.Version | None
+    _start: iidx.VersionAC | None
+    _end: iidx.VersionAC | None
 
     def __init__(
         self,
-        start: iidx.Version | None,
-        end: iidx.Version | None,
+        start: iidx.VersionAC | None,
+        end: iidx.VersionAC | None,
     ) -> None:
         super().__init__()
-
-        if start is not None and start.value == 'CS':
-            raise ValueError(start)
         self._start = start
-
-        if end is not None and end.value == 'CS':
-            raise ValueError(end)
         self._end = end
-
         # TODO: start>endの場合を弾く
 
     @property
-    def start(self) -> iidx.Version | None:
+    def start(self) -> iidx.VersionAC | None:
         return self._start
 
     @property
-    def end(self) -> iidx.Version | None:
+    def end(self) -> iidx.VersionAC | None:
         return self._end
 
 def parse_version_filter(s: str) -> VersionFilter:
@@ -67,18 +60,20 @@ def parse_version_filter(s: str) -> VersionFilter:
     ss = s.split('-')
     match len(ss):
         case 1:
-            if not iidx.Version.PATTERN.fullmatch(s):
-                raise ValueError(s)
-            version = iidx.Version(s)
+            try:
+                version = iidx.version_from_code(s)
+            except ValueError as e:
+                raise e
+
             return VersionFilterSingle(version)
 
         case 2:
-            def to_version(s: str) -> iidx.Version | None:
+            def to_version(s: str) -> iidx.VersionAC | None:
                 if s == '':
                     return None
-                if not iidx.Version.PATTERN.fullmatch(s):
+                if not iidx.VersionAC.code_is_valid(s):
                     raise ValueError(s)
-                return iidx.Version(s)
+                return iidx.VersionAC(s)
 
             s_start, s_end = map(to_version, ss)
             if s_start is None and s_end is None:

@@ -68,24 +68,23 @@ class ScorePageParams:
 
     @classmethod
     def encode_version(cls, version: iidx.Version) -> str:
-        match version.value:
+        match version.code:
             case 'CS':
                 return '0'
             case 'sub':
                 return 's'
             case _:
-                return version.value
+                return version.code
 
     @classmethod
     def decode_version(cls, code: str) -> iidx.Version:
         match code:
             case '0':
-                version = 'CS'
+                return iidx.VersionCSOnly()
             case 's':
-                version = 'sub'
+                return iidx.VersionAC('sub')
             case _:
-                version = code
-        return iidx.Version(version)
+                return iidx.VersionAC(code)
 
     @classmethod
     def encode_play_side(cls, play_side: PlaySide) -> str:

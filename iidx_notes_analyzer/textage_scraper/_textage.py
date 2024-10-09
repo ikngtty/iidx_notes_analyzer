@@ -131,10 +131,13 @@ class MusicTitleTableRow:
         raw = self._raw[0]
         assert isinstance(raw, int)
 
-        v = 'CS' if raw == 0 else\
-            'sub' if raw == 35 else\
-            str(raw)
-        return iidx.Version(v)
+        match raw:
+            case 0:
+                return iidx.VersionCSOnly()
+            case 35:
+                return iidx.VersionAC('sub')
+            case _:
+                return iidx.VersionAC(str(raw))
 
     @property
     def genre(self) -> str:

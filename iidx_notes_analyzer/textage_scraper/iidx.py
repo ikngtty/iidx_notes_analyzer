@@ -1,4 +1,6 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from functools import total_ordering
 import re
 from typing import Any, Literal, NamedTuple, Self, TypeGuard
 
@@ -45,28 +47,73 @@ Level = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 def is_valid_for_level(num: int) -> TypeGuard[Level]:
     return 1 <= num and num <= 12
 
-class Version:
-    _value: str
+class Version(ABC):
+    @property
+    @abstractmethod
+    def code(self) -> str:
+        pass
 
-    # CS：AC未収録のためバージョン無し
-    # sub：substream
-    # 数字（1〜）：番号に対応するバージョン
-    PATTERN = re.compile('CS|sub|[1-9][0-9]*')
+    @classmethod
+    @abstractmethod
+    def code_is_valid(cls, code: str) -> bool:
+        pass
 
-    def __init__(self, value: str) -> None:
-        if not self.PATTERN.fullmatch(value):
-            raise ValueError(value)
+    def __str__(self) -> str:
+        return self.code
 
-        self._value = value
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Version):
+            return NotImplemented
+        return self.code == other.code
+
+@total_ordering
+class VersionAC(Version):
+    _code: str
+
+    # subはsubstreamのこと
+    PATTERN = re.compile('sub|[1-9][0-9]*')
+
+    @classmethod
+    def code_is_valid(cls, code: str) -> bool:
+        return cls.PATTERN.fullmatch(code) is not None
+
+    def __init__(self, code: str) -> None:
+        super().__init__()
+
+        if not self.code_is_valid(code):
+            raise ValueError(code)
+
+        self._code = code
 
     @property
-    def value(self) -> str:
-        return self._value
+    def code(self) -> str:
+        return self._code
 
-    def __eq__(self, obj: object) -> bool:
-        if not isinstance(obj, Version):
-            return False
-        return self.value == obj.value
+    def __float__(self) -> float:
+        if self.code == 'sub':
+            return 1.5
+        return float(self.code)
+
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, VersionAC):
+            return NotImplemented
+        return float(self) < float(other)
+
+class VersionCSOnly(Version):
+    @classmethod
+    def code_is_valid(cls, code: str) -> bool:
+        return code == 'CS'
+
+    @property
+    def code(self) -> str:
+        return 'CS'
+
+def version_from_code(code: str) -> Version:
+    if VersionCSOnly.code_is_valid(code):
+        return VersionCSOnly()
+    if VersionAC.code_is_valid(code):
+        return VersionAC(code)
+    raise ValueError(code)
 
 @dataclass(frozen=True, slots=True)
 class Score:
@@ -109,7 +156,7 @@ class Music:
         # TODO: validate
         return cls(
             d['tag'],
-            Version(d['version']),
+            version_from_code(d['version']),
             d['genre'],
             d['artist'],
             d['title'],
@@ -119,7 +166,7 @@ class Music:
     def as_dict(self) -> dict[str, Any]:
         return {
             'tag': self.tag,
-            'version': self.version.value,
+            'version': self.version.code,
             'genre': self.genre,
             'artist': self.artist,
             'title': self.title,

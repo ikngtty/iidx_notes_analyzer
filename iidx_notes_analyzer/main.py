@@ -40,7 +40,7 @@ def scrape_score(
 
             page_text =\
                 f'{score.kind.play_mode} '\
-                f'VER:{music.version.value} '\
+                f'VER:{music.version} '\
                 f'[{music.tag}] '\
                 f'{music.title} '\
                 f'({score.kind.difficulty})'
