@@ -20,6 +20,7 @@ p_scrape_music_list.add_argument('-w', '--overwrite', action='store_true',
 )
 
 p_scrape_score.add_argument('play_mode', nargs='?', type=str)
+# TODO: "-sub"（バージョンの範囲指定で、無〜substream）が通らない
 p_scrape_score.add_argument('version', nargs='?', type=str)
 p_scrape_score.add_argument('music_tag', nargs='?', type=str)
 p_scrape_score.add_argument('difficulty', nargs='?', type=str)
