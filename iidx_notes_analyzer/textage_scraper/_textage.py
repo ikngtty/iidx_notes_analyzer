@@ -84,7 +84,7 @@ class MusicTableRow:
             case iidx.ScoreKind('DP', 'L'):
                 level, option = self._raw[21], self._raw[22]
             case _:
-                raise ValueError(kind)
+                raise ValueError('unexpected score kind: ' + str(kind))
 
         assert isinstance(level, int)
         if level == 0:

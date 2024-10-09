@@ -26,7 +26,7 @@ def _match_version_filter(
         match_end = cond.end is None or music.version <= cond.end
         return match_start and match_end
 
-    raise RuntimeError(cond, 'unexpected type')
+    raise ValueError('unexpected type: ' + str(type(cond)))
 
 def save_musics(musics: list[iidx.Music], overwrites: bool = False):
     os.makedirs(_DATA_DIR_PATH, exist_ok=True)

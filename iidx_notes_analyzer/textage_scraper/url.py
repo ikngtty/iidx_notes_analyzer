@@ -31,7 +31,7 @@ class ScorePageParams:
             case 'DP':
                 play_side = 'DP'
             case _:
-                raise ValueError(score)
+                raise ValueError('unexpected play mode: ' + score.kind.play_mode)
 
         return cls(
             music.version,
@@ -96,7 +96,7 @@ class ScorePageParams:
             case 'DP':
                 return 'D'
             case _:
-                raise ValueError(play_side)
+                raise ValueError('unexpected play side: ' + play_side)
 
     @classmethod
     def decode_play_side(cls, code: str) -> PlaySide:
@@ -108,7 +108,7 @@ class ScorePageParams:
             case 'D':
                 return 'DP'
             case _:
-                raise ValueError(code)
+                raise ValueError('unexpected play side code: ' + code)
 
     @classmethod
     def encode_difficulty(cls, difficulty: iidx.Difficulty) -> str:
@@ -124,7 +124,7 @@ class ScorePageParams:
             case 'L':
                 return 'X'
             case _:
-                raise ValueError(difficulty)
+                raise ValueError('unexpected difficulty: ' + difficulty)
 
     @classmethod
     def decode_difficulty(cls, code: str) -> iidx.Difficulty:
@@ -140,7 +140,7 @@ class ScorePageParams:
             case 'X':
                 return 'L'
             case _:
-                raise ValueError(code)
+                raise ValueError('unexpected difficulty code: ' + code)
 
     @classmethod
     def encode_level(cls, level: iidx.Level) -> str:
