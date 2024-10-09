@@ -76,12 +76,12 @@ def parse_version_filter(s: str) -> VersionFilter:
                     raise ValueError(s)
                 return iidx.VersionAC(s)
 
-            s_start, s_end = map(to_version, ss)
-            if s_start is None and s_end is None:
+            start, end = map(to_version, ss)
+            if start is None and end is None:
                 raise ValueError(s)
-            if s_start is not None and s_end is not None and s_start > s_end:
-                raise ValueError(s_start, s_end)
-            return VersionFilterRange(s_start, s_end)
+            if start is not None and end is not None and start > end:
+                raise ValueError(start, end)
+            return VersionFilterRange(start, end)
 
         case _:
             raise ValueError(s)
