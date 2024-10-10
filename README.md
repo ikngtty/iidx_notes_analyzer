@@ -130,12 +130,26 @@ python -m iidx_notes_analyzer scrape_score DP '' '' A
 python -m iidx_notes_analyzer analyze
 # 実際に出てこない同時押しパターンも含め、全てのパターンを表示したい時
 python -m iidx_notes_analyzer analyze --show-all
+# SPのみ
+python -m iidx_notes_analyzer analyze --mode=SP
+# SPかつIIDX REDのみ
+python -m iidx_notes_analyzer analyze --mode=SP --ver=11
+# SPかつIIDX RED以降全て
+python -m iidx_notes_analyzer analyze --mode=SP --ver=11-
+# SPかつIIDX REDからIIDX GOLDまで
+python -m iidx_notes_analyzer analyze --mode=SP --ver=11-14
+# SPかつAAのみ（曲に対応するIDはTexTageのURLを元に自分で調べてください）
+python -m iidx_notes_analyzer analyze --mode=SP --tag=aa_amuro
+# AA(SPA)のみ
+python -m iidx_notes_analyzer analyze --mode=SP --tag=aa_amuro --diff=A
+# 全曲のDPAのみ
+python -m iidx_notes_analyzer analyze --mode=DP --diff=A
 ```
 
-保存した譜面データを分析し、結果を表示します。
+譜面データが保存された曲の内、指定された条件に当てはまる曲を対象にして分析し、
+結果（全ての同時押しパターンの個数）を表示します。
 
-とりあえず、保存された全譜面について、全ての同時押しパターンの個数を集計し、表示するところまで作りました。\
-DP譜面の集計とかするとカス（プレイサイドのことを考えてない）なので、とりあえずSP譜面だけスクレイピングして実行することをお勧めします。
+今のところ、DP譜面の集計とかするとカス（プレイサイドのことを考えてない）です。
 
 ## 実行結果
 

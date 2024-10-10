@@ -67,11 +67,22 @@ def scrape_score(
 
             print('finished.')
 
-def analyze(show_all: bool = False) -> None:
-    # 保存されてる譜面全てが対象
-    all_music_scores = persistence.load_musics(condition.ScoreFilter())
+def analyze(
+    play_mode: condition.PlayModeFilter = '',
+    version: condition.VersionFilter = condition.VersionFilterAll(),
+    music_tag: condition.MusicTagFilter = '',
+    difficulty: condition.DifficultyFilter = '',
+    show_all: bool = False,
+) -> None:
+
+    cond = condition.ScoreFilter(
+        play_mode=play_mode,
+        version=version,
+        music_tag=music_tag,
+        difficulty=difficulty,
+    )
     target_music_scores = [
-        (music, score) for music, score in all_music_scores
+        (music, score) for music, score in persistence.load_musics(cond)
         if persistence.has_saved_notes(music, score)
     ]
 

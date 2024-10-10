@@ -25,6 +25,18 @@ p_scrape_score.add_argument('version', nargs='?', type=str)
 p_scrape_score.add_argument('music_tag', nargs='?', type=str)
 p_scrape_score.add_argument('difficulty', nargs='?', type=str)
 
+p_analyze.add_argument('--mode', type=str, default='',
+    help='specify play mode ( SP | DP )',
+)
+p_analyze.add_argument('--ver', type=str, default='',
+    help='specify version (ex. 20 | 20-30 | -20 | 20- | sub-20 )',
+)
+p_analyze.add_argument('--tag', type=str, default='',
+    help='specify music tag (ex. aa_amuro)',
+)
+p_analyze.add_argument('--diff', type=str, default='',
+    help='specify difficulty ( B | N | H | A | L )',
+)
 p_analyze.add_argument('-a', '--show-all', action='store_true',
     help='show all chord patterns even if its count is 0',
 )
@@ -66,9 +78,28 @@ match args.subcommand:
         main.scrape_score(play_mode, version, music_tag, difficulty)
 
     case 'analyze':
+        assert isinstance(args.mode, str)
+        assert isinstance(args.ver, str)
+        assert isinstance(args.tag, str)
+        assert isinstance(args.diff, str)
         assert isinstance(args.show_all, bool)
 
-        main.analyze(show_all=args.show_all)
+        # TODO: バリデーションエラーのメッセージを詳しく
+        try:
+            play_mode = condition.parse_play_mode_filter(args.mode)
+        except ValueError as e:
+            raise e
+        try:
+            version = condition.parse_version_filter(args.ver)
+        except ValueError as e:
+            raise e
+        music_tag: condition.MusicTagFilter = args.tag
+        try:
+            difficulty = condition.parse_difficulty_filter(args.diff)
+        except ValueError as e:
+            raise e
+
+        main.analyze(play_mode, version, music_tag, difficulty, args.show_all)
 
     case _:
         raise ValueError('unknown subcommand: ' + args.subcommand)
