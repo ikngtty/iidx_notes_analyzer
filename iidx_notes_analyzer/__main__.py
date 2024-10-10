@@ -19,11 +19,11 @@ p_scrape_music_list.add_argument('-w', '--overwrite', action='store_true',
     help='overwrite the text file to save scraping results',
 )
 
-p_scrape_score.add_argument('play_mode', nargs='?', type=str)
+p_scrape_score.add_argument('play_mode', nargs='?', type=str, default='')
 # TODO: "-sub"（バージョンの範囲指定で、無〜substream）が通らない
-p_scrape_score.add_argument('version', nargs='?', type=str)
-p_scrape_score.add_argument('music_tag', nargs='?', type=str)
-p_scrape_score.add_argument('difficulty', nargs='?', type=str)
+p_scrape_score.add_argument('version', nargs='?', type=str, default='')
+p_scrape_score.add_argument('music_tag', nargs='?', type=str, default='')
+p_scrape_score.add_argument('difficulty', nargs='?', type=str, default='')
 
 p_analyze.add_argument('--mode', type=str, default='',
     help='specify play mode ( SP | DP )',
@@ -49,29 +49,23 @@ match args.subcommand:
         main.scrape_music_list(overwrites=args.overwrite)
 
     case 'scrape_score':
-        def get_str_arg(a: Any) -> str:
-            if a is None:
-                return ''
-            assert isinstance(a, str)
-            return a
-
-        play_mode_str = get_str_arg(args.play_mode)
-        version_str = get_str_arg(args.version)
-        music_tag_str = get_str_arg(args.music_tag)
-        difficulty_str = get_str_arg(args.difficulty)
+        assert isinstance(args.play_mode, str)
+        assert isinstance(args.version, str)
+        assert isinstance(args.music_tag, str)
+        assert isinstance(args.difficulty, str)
 
         # TODO: バリデーションエラーのメッセージを詳しく
         try:
-            play_mode = condition.parse_play_mode_filter(play_mode_str)
+            play_mode = condition.parse_play_mode_filter(args.play_mode)
         except ValueError as e:
             raise e
         try:
-            version = condition.parse_version_filter(version_str)
+            version = condition.parse_version_filter(args.version)
         except ValueError as e:
             raise e
-        music_tag: condition.MusicTagFilter = music_tag_str
+        music_tag: condition.MusicTagFilter = args.music_tag
         try:
-            difficulty = condition.parse_difficulty_filter(difficulty_str)
+            difficulty = condition.parse_difficulty_filter(args.difficulty)
         except ValueError as e:
             raise e
 
