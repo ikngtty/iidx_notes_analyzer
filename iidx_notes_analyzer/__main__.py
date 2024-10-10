@@ -25,17 +25,17 @@ p_scrape_score.add_argument('version', nargs='?', type=str, default='')
 p_scrape_score.add_argument('music_tag', nargs='?', type=str, default='')
 p_scrape_score.add_argument('difficulty', nargs='?', type=str, default='')
 
-p_analyze.add_argument('--mode', type=str, default='',
-    help='specify play mode ( SP | DP )',
+p_analyze.add_argument('--mode', dest='play_mode', type=str, default='',
+    help='SP | DP',
 )
-p_analyze.add_argument('--ver', type=str, default='',
-    help='specify version (ex. 20 | 20-30 | -20 | 20- | sub-20 )',
+p_analyze.add_argument('--ver', dest='version', type=str, default='',
+    help='ex. 20 | 20-30 | -20 | 20- | sub-20',
 )
-p_analyze.add_argument('--tag', type=str, default='',
-    help='specify music tag (ex. aa_amuro)',
+p_analyze.add_argument('--tag', dest='music_tag', type=str, default='',
+    help='ex. aa_amuro',
 )
-p_analyze.add_argument('--diff', type=str, default='',
-    help='specify difficulty ( B | N | H | A | L )',
+p_analyze.add_argument('--diff', dest='difficulty', type=str, default='',
+    help='B | N | H | A | L',
 )
 p_analyze.add_argument('-a', '--show-all', action='store_true',
     help='show all chord patterns even if its count is 0',
@@ -72,24 +72,24 @@ match args.subcommand:
         main.scrape_score(play_mode, version, music_tag, difficulty)
 
     case 'analyze':
-        assert isinstance(args.mode, str)
-        assert isinstance(args.ver, str)
-        assert isinstance(args.tag, str)
-        assert isinstance(args.diff, str)
+        assert isinstance(args.play_mode, str)
+        assert isinstance(args.version, str)
+        assert isinstance(args.music_tag, str)
+        assert isinstance(args.difficulty, str)
         assert isinstance(args.show_all, bool)
 
         # TODO: バリデーションエラーのメッセージを詳しく
         try:
-            play_mode = condition.parse_play_mode_filter(args.mode)
+            play_mode = condition.parse_play_mode_filter(args.play_mode)
         except ValueError as e:
             raise e
         try:
-            version = condition.parse_version_filter(args.ver)
+            version = condition.parse_version_filter(args.version)
         except ValueError as e:
             raise e
-        music_tag: condition.MusicTagFilter = args.tag
+        music_tag: condition.MusicTagFilter = args.music_tag
         try:
-            difficulty = condition.parse_difficulty_filter(args.diff)
+            difficulty = condition.parse_difficulty_filter(args.difficulty)
         except ValueError as e:
             raise e
 
