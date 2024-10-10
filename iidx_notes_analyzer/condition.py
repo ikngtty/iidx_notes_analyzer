@@ -96,7 +96,7 @@ def parse_difficulty_filter(s: str) -> DifficultyFilter:
         raise ValueError(s)
     return s
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, slots=True, kw_only=True)
 class ScoreFilter:
     has_URL: HasURLFilter = None
     play_mode: PlayModeFilter = ''
