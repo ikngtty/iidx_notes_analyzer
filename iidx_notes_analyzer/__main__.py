@@ -1,8 +1,6 @@
 import argparse
-from typing import Any
 
-from . import condition, main
-from .textage_scraper import iidx
+from . import main
 
 p = argparse.ArgumentParser(prog='iidx_notes_analyzer')
 
@@ -60,22 +58,18 @@ match args.subcommand:
         assert isinstance(args.music_tag, str)
         assert isinstance(args.difficulty, str)
 
-        # TODO: バリデーションエラーのメッセージを詳しく
         try:
-            play_mode = condition.parse_play_mode_filter(args.play_mode)
+            filter = main.parse_filter_to_scrape(
+                play_mode=args.play_mode,
+                version=args.version,
+                music_tag=args.music_tag,
+                difficulty=args.difficulty,
+            )
         except ValueError as e:
-            raise e
-        try:
-            version = condition.parse_version_filter(args.version)
-        except ValueError as e:
-            raise e
-        music_tag: condition.MusicTagFilter = args.music_tag
-        try:
-            difficulty = condition.parse_difficulty_filter(args.difficulty)
-        except ValueError as e:
+            # TODO: バリデーションエラーのメッセージを詳しく
             raise e
 
-        main.scrape_score(play_mode, version, music_tag, difficulty)
+        main.scrape_score(filter=filter)
 
     case 'analyze':
         assert isinstance(args.play_mode, str)
@@ -86,28 +80,20 @@ match args.subcommand:
         assert isinstance(args.show_all, bool)
         assert isinstance(args.list, bool)
 
-        # TODO: バリデーションエラーのメッセージを詳しく
         try:
-            play_mode = condition.parse_play_mode_filter(args.play_mode)
+            filter = main.parse_filter_to_analyze(
+                play_mode=args.play_mode,
+                version=args.version,
+                music_tag=args.music_tag,
+                difficulty=args.difficulty,
+                level=args.level,
+            )
         except ValueError as e:
-            raise e
-        try:
-            version = condition.parse_version_filter(args.version)
-        except ValueError as e:
-            raise e
-        music_tag: condition.MusicTagFilter = args.music_tag
-        try:
-            difficulty = condition.parse_difficulty_filter(args.difficulty)
-        except ValueError as e:
-            raise e
-        try:
-            level = condition.parse_level_filter(args.level)
-        except ValueError as e:
+            # TODO: バリデーションエラーのメッセージを詳しく
             raise e
 
         main.analyze(
-            play_mode=play_mode, version=version,
-            music_tag=music_tag, difficulty=difficulty, level=level,
+            filter=filter,
             show_all=args.show_all,
             show_score_list=args.list,
         )

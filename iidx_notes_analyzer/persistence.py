@@ -1,26 +1,124 @@
+from abc import ABC
+from dataclasses import dataclass
 import json
 import os
-from typing import Iterator
+from typing import Iterator, Literal
 
-from . import condition
 from .util import pjson, util
 from .textage_scraper import iidx
 
 _DATA_DIR_PATH = 'data'
 _MUSICS_FILE_PATH = os.path.join(_DATA_DIR_PATH, 'musics.json')
 
+HasURLFilter = bool | None
+
+PlayModeFilter = iidx.PlayMode | Literal['']
+
+class VersionFilter(ABC):
+    pass
+
+class VersionFilterAll(VersionFilter):
+    pass
+
+class VersionFilterSingle(VersionFilter):
+    _value: iidx.Version
+
+    def __init__(self, value: iidx.Version) -> None:
+        super().__init__()
+        self._value = value
+
+    @property
+    def value(self) -> iidx.Version:
+        return self._value
+
+class VersionFilterRange(VersionFilter):
+    _start: iidx.VersionAC | None
+    _end: iidx.VersionAC | None
+
+    def __init__(
+        self,
+        start: iidx.VersionAC | None,
+        end: iidx.VersionAC | None,
+    ) -> None:
+        super().__init__()
+        if start is not None and end is not None and start > end:
+            raise ValueError(str(start), str(end))
+        self._start = start
+        self._end = end
+
+    @property
+    def start(self) -> iidx.VersionAC | None:
+        return self._start
+
+    @property
+    def end(self) -> iidx.VersionAC | None:
+        return self._end
+
+MusicTagFilter = str
+
+DifficultyFilter = iidx.Difficulty | Literal['']
+
+class LevelFilter(ABC):
+    pass
+
+class LevelFilterAll(LevelFilter):
+    pass
+
+class LevelFilterSingle(LevelFilter):
+    _value: iidx.Level
+
+    def __init__(self, value: iidx.Level) -> None:
+        super().__init__()
+        self._value = value
+
+    @property
+    def value(self) -> iidx.Level:
+        return self._value
+
+class LevelFilterRange(LevelFilter):
+    _start: iidx.Level | None
+    _end: iidx.Level | None
+
+    def __init__(
+        self,
+        start: iidx.Level | None,
+        end: iidx.Level | None,
+    ) -> None:
+        super().__init__()
+        if start is not None and end is not None and start > end:
+            raise ValueError(start, end)
+        self._start = start
+        self._end = end
+
+    @property
+    def start(self) -> iidx.Level | None:
+        return self._start
+
+    @property
+    def end(self) -> iidx.Level | None:
+        return self._end
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class ScoreFilter:
+    has_URL: HasURLFilter = None
+    play_mode: PlayModeFilter = ''
+    version: VersionFilter = VersionFilterAll()
+    music_tag: MusicTagFilter = ''
+    difficulty: DifficultyFilter = ''
+    level: LevelFilter = LevelFilterAll()
+
 def _match_version_filter(
     music: iidx.Music,
-    cond: condition.VersionFilter,
+    cond: VersionFilter,
 ) -> bool:
     match cond:
-        case condition.VersionFilterAll():
+        case VersionFilterAll():
             return True
 
-        case condition.VersionFilterSingle():
+        case VersionFilterSingle():
             return music.version == cond.value
 
-        case condition.VersionFilterRange():
+        case VersionFilterRange():
             if not isinstance(music.version, iidx.VersionAC):
                 return False
             match_start = cond.start is None or music.version >= cond.start
@@ -32,16 +130,16 @@ def _match_version_filter(
 
 def _match_level_filter(
     score: iidx.Score,
-    cond: condition.LevelFilter,
+    cond: LevelFilter,
 ) -> bool:
     match cond:
-        case condition.LevelFilterAll():
+        case LevelFilterAll():
             return True
 
-        case condition.LevelFilterSingle():
+        case LevelFilterSingle():
             return score.level == cond.value
 
-        case condition.LevelFilterRange():
+        case LevelFilterRange():
             match_start = cond.start is None or score.level >= cond.start
             match_end = cond.end is None or score.level <= cond.end
             return match_start and match_end
@@ -59,7 +157,7 @@ def save_musics(musics: list[iidx.Music], overwrites: bool = False):
     with open(_MUSICS_FILE_PATH, 'w') as f:
         pjson.dump(dict_musics, f, ensure_ascii=False)
 
-def load_musics(cond: condition.ScoreFilter) -> Iterator[tuple[iidx.Music, iidx.Score]]:
+def load_musics(filter: ScoreFilter) -> Iterator[tuple[iidx.Music, iidx.Score]]:
     with open(_MUSICS_FILE_PATH) as f:
         raw_musics = json.load(f)
         assert isinstance(raw_musics, list)
@@ -69,16 +167,16 @@ def load_musics(cond: condition.ScoreFilter) -> Iterator[tuple[iidx.Music, iidx.
     all_musics = (iidx.Music.from_dict(raw_music) for raw_music in raw_musics)
     target_musics = (
         music for music in all_musics
-        if _match_version_filter(music, cond.version)
-        if not cond.music_tag or music.tag == cond.music_tag
+        if _match_version_filter(music, filter.version)
+        if not filter.music_tag or music.tag == filter.music_tag
     )
     for music in target_musics:
         target_scores = (
             score for score in music.scores
-            if cond.has_URL is None or score.has_URL == cond.has_URL
-            if not cond.play_mode or score.kind.play_mode == cond.play_mode
-            if not cond.difficulty or score.kind.difficulty == cond.difficulty
-            if _match_level_filter(score, cond.level)
+            if filter.has_URL is None or score.has_URL == filter.has_URL
+            if not filter.play_mode or score.kind.play_mode == filter.play_mode
+            if not filter.difficulty or score.kind.difficulty == filter.difficulty
+            if _match_level_filter(score, filter.level)
         )
         for score in target_scores:
             yield (music, score)

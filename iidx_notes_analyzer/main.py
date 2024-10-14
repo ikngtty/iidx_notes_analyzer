@@ -1,34 +1,156 @@
 from collections import Counter
+from dataclasses import dataclass
 from time import sleep
 
-from . import condition, persistence
-from .textage_scraper import url, main as textage
+from . import persistence
+from .textage_scraper import iidx, main as textage, url
 from .util import util
 
 # TODO: シグナルを受け付けて穏便にキャンセル終了できる機能
+
+HasURLFilter = persistence.HasURLFilter
+
+PlayModeFilter = persistence.PlayModeFilter
+def parse_play_mode_filter(s: str) -> PlayModeFilter:
+    if s == '':
+        return ''
+    if not iidx.is_valid_for_play_mode(s):
+        raise ValueError(s)
+    return s
+
+VersionFilter = persistence.VersionFilter
+VersionFilterAll = persistence.VersionFilterAll
+VersionFilterSingle = persistence.VersionFilterSingle
+VersionFilterRange = persistence.VersionFilterRange
+def parse_version_filter(s: str) -> VersionFilter:
+    if s == '':
+        return VersionFilterAll()
+
+    ss = s.split('-')
+    match len(ss):
+        case 1:
+            try:
+                version = iidx.version_from_code(s)
+            except ValueError as e:
+                raise e
+
+            return VersionFilterSingle(version)
+
+        case 2:
+            def to_version(s: str) -> iidx.VersionAC | None:
+                if s == '':
+                    return None
+                if not iidx.VersionAC.code_is_valid(s):
+                    raise ValueError(s)
+                return iidx.VersionAC(s)
+
+            start, end = map(to_version, ss)
+            if start is None and end is None:
+                raise ValueError(s)
+            if start is not None and end is not None and start > end:
+                raise ValueError(str(start), str(end))
+            return VersionFilterRange(start, end)
+
+        case _:
+            raise ValueError(s)
+
+MusicTagFilter = persistence.MusicTagFilter
+
+DifficultyFilter = persistence.DifficultyFilter
+def parse_difficulty_filter(s: str) -> DifficultyFilter:
+    if s == '':
+        return ''
+    if not iidx.is_valid_for_difficulty(s):
+        raise ValueError(s)
+    return s
+
+LevelFilter = persistence.LevelFilter
+LevelFilterAll = persistence.LevelFilterAll
+LevelFilterSingle = persistence.LevelFilterSingle
+LevelFilterRange = persistence.LevelFilterRange
+def parse_level_filter(s: str) -> LevelFilter:
+    if s == '':
+        return LevelFilterAll()
+
+    ss = s.split('-')
+    match len(ss):
+        case 1:
+            try:
+                i = int(s)
+            except Exception as e:
+                raise e
+
+            if not iidx.is_valid_for_level(i):
+                raise ValueError(s)
+
+            return LevelFilterSingle(i)
+
+        case 2:
+            def to_level(s: str) -> iidx.Level | None:
+                if s == '':
+                    return None
+
+                try:
+                    i = int(s)
+                except Exception as e:
+                    raise e
+
+                if not iidx.is_valid_for_level(i):
+                    raise ValueError(s)
+
+                return i
+
+            start, end = map(to_level, ss)
+            if start is None and end is None:
+                raise ValueError(s)
+            if start is not None and end is not None and start > end:
+                raise ValueError(start, end)
+            return LevelFilterRange(start, end)
+
+        case _:
+            raise ValueError(s)
 
 def scrape_music_list(overwrites: bool = False) -> None:
     with textage.Client() as scraper:
         page = scraper.scrape_music_list_page()
         persistence.save_musics(page.musics, overwrites=overwrites)
 
+@dataclass(frozen=True, slots=True, kw_only=True)
+class FilterToScrape:
+    play_mode: PlayModeFilter = ''
+    version: VersionFilter = VersionFilterAll()
+    music_tag: MusicTagFilter = ''
+    difficulty: DifficultyFilter = ''
+
+def parse_filter_to_scrape(
+    play_mode: str = '',
+    version: str = '',
+    music_tag: str = '',
+    difficulty: str = '',
+) -> FilterToScrape:
+
+    return FilterToScrape(
+        play_mode=parse_play_mode_filter(play_mode),
+        version=parse_version_filter(version),
+        music_tag=music_tag,
+        difficulty=parse_difficulty_filter(difficulty),
+    )
+
 # TODO: 引数全部指定されてたら、譜面ページリストにデータがなくてもレベル0にして
 # 譜面取りに行ってくるようにしたい
 def scrape_score(
-    play_mode: condition.PlayModeFilter = '',
-    version: condition.VersionFilter = condition.VersionFilterAll(),
-    music_tag: condition.MusicTagFilter = '',
-    difficulty: condition.DifficultyFilter = '',
+    filter: FilterToScrape = FilterToScrape(),
 ) -> None:
 
-    cond = condition.ScoreFilter(
-        has_URL=True,
-        play_mode=play_mode,
-        version=version,
-        music_tag=music_tag,
-        difficulty=difficulty,
-    )
-    target_music_scores = list(persistence.load_musics(cond))
+    target_music_scores = list(persistence.load_musics(
+        persistence.ScoreFilter(
+            has_URL=True,
+            play_mode=filter.play_mode,
+            version=filter.version,
+            music_tag=filter.music_tag,
+            difficulty=filter.difficulty,
+        ),
+    ))
 
     print(f'Found {len(target_music_scores)} scores.')
 
@@ -67,25 +189,47 @@ def scrape_score(
 
             print('finished.')
 
+@dataclass(frozen=True, slots=True, kw_only=True)
+class FilterToAnalyze:
+    play_mode: PlayModeFilter = ''
+    version: VersionFilter = VersionFilterAll()
+    music_tag: MusicTagFilter = ''
+    difficulty: DifficultyFilter = ''
+    level: LevelFilter = LevelFilterAll()
+
+def parse_filter_to_analyze(
+    play_mode: str = '',
+    version: str = '',
+    music_tag: str = '',
+    difficulty: str = '',
+    level: str = '',
+) -> FilterToAnalyze:
+
+    return FilterToAnalyze(
+        play_mode=parse_play_mode_filter(play_mode),
+        version=parse_version_filter(version),
+        music_tag=music_tag,
+        difficulty=parse_difficulty_filter(difficulty),
+        level=parse_level_filter(level),
+    )
+
 def analyze(
-    play_mode: condition.PlayModeFilter = '',
-    version: condition.VersionFilter = condition.VersionFilterAll(),
-    music_tag: condition.MusicTagFilter = '',
-    difficulty: condition.DifficultyFilter = '',
-    level: condition.LevelFilter = condition.LevelFilterAll(),
+    filter: FilterToAnalyze = FilterToAnalyze(),
     show_all: bool = False,
     show_score_list: bool = False,
 ) -> None:
 
-    cond = condition.ScoreFilter(
-        play_mode=play_mode,
-        version=version,
-        music_tag=music_tag,
-        difficulty=difficulty,
-        level=level,
-    )
     target_music_scores = [
-        (music, score) for music, score in persistence.load_musics(cond)
+        (music, score) for music, score
+        in persistence.load_musics(
+            persistence.ScoreFilter(
+                play_mode=filter.play_mode,
+                version=filter.version,
+                music_tag=filter.music_tag,
+                difficulty=filter.difficulty,
+                level=filter.level,
+            ),
+        )
         if persistence.has_saved_notes(music, score)
     ]
 
