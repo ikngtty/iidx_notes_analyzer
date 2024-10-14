@@ -72,6 +72,7 @@ def analyze(
     version: condition.VersionFilter = condition.VersionFilterAll(),
     music_tag: condition.MusicTagFilter = '',
     difficulty: condition.DifficultyFilter = '',
+    level: condition.LevelFilter = condition.LevelFilterAll(),
     show_all: bool = False,
     show_score_list: bool = False,
 ) -> None:
@@ -81,6 +82,7 @@ def analyze(
         version=version,
         music_tag=music_tag,
         difficulty=difficulty,
+        level=level,
     )
     target_music_scores = [
         (music, score) for music, score in persistence.load_musics(cond)

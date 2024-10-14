@@ -30,6 +30,25 @@ def _match_version_filter(
         case _:
             raise ValueError('unexpected type: ' + str(type(cond)))
 
+def _match_level_filter(
+    score: iidx.Score,
+    cond: condition.LevelFilter,
+) -> bool:
+    match cond:
+        case condition.LevelFilterAll():
+            return True
+
+        case condition.LevelFilterSingle():
+            return score.level == cond.value
+
+        case condition.LevelFilterRange():
+            match_start = cond.start is None or score.level >= cond.start
+            match_end = cond.end is None or score.level <= cond.end
+            return match_start and match_end
+
+        case _:
+            raise ValueError('unexpected type: ' + str(type(cond)))
+
 def save_musics(musics: list[iidx.Music], overwrites: bool = False):
     os.makedirs(_DATA_DIR_PATH, exist_ok=True)
 
@@ -59,6 +78,7 @@ def load_musics(cond: condition.ScoreFilter) -> Iterator[tuple[iidx.Music, iidx.
             if cond.has_URL is None or score.has_URL == cond.has_URL
             if not cond.play_mode or score.kind.play_mode == cond.play_mode
             if not cond.difficulty or score.kind.difficulty == cond.difficulty
+            if _match_level_filter(score, cond.level)
         )
         for score in target_scores:
             yield (music, score)

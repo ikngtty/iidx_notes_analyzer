@@ -96,6 +96,88 @@ def parse_difficulty_filter(s: str) -> DifficultyFilter:
         raise ValueError(s)
     return s
 
+class LevelFilter(ABC):
+    pass
+
+class LevelFilterAll(LevelFilter):
+    pass
+
+class LevelFilterSingle(LevelFilter):
+    _value: iidx.Level
+
+    def __init__(self, value: iidx.Level) -> None:
+        super().__init__()
+        self._value = value
+
+    @property
+    def value(self) -> iidx.Level:
+        return self._value
+
+class LevelFilterRange(LevelFilter):
+    _start: iidx.Level | None
+    _end: iidx.Level | None
+
+    def __init__(
+        self,
+        start: iidx.Level | None,
+        end: iidx.Level | None,
+    ) -> None:
+        super().__init__()
+        if start is not None and end is not None and start > end:
+            raise ValueError(start, end)
+        self._start = start
+        self._end = end
+
+    @property
+    def start(self) -> iidx.Level | None:
+        return self._start
+
+    @property
+    def end(self) -> iidx.Level | None:
+        return self._end
+
+def parse_level_filter(s: str) -> LevelFilter:
+    if s == '':
+        return LevelFilterAll()
+
+    ss = s.split('-')
+    match len(ss):
+        case 1:
+            try:
+                i = int(s)
+            except Exception as e:
+                raise e
+
+            if not iidx.is_valid_for_level(i):
+                raise ValueError(s)
+
+            return LevelFilterSingle(i)
+
+        case 2:
+            def to_level(s: str) -> iidx.Level | None:
+                if s == '':
+                    return None
+
+                try:
+                    i = int(s)
+                except Exception as e:
+                    raise e
+
+                if not iidx.is_valid_for_level(i):
+                    raise ValueError(s)
+
+                return i
+
+            start, end = map(to_level, ss)
+            if start is None and end is None:
+                raise ValueError(s)
+            if start is not None and end is not None and start > end:
+                raise ValueError(start, end)
+            return LevelFilterRange(start, end)
+
+        case _:
+            raise ValueError(s)
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class ScoreFilter:
     has_URL: HasURLFilter = None
@@ -103,3 +185,4 @@ class ScoreFilter:
     version: VersionFilter = VersionFilterAll()
     music_tag: MusicTagFilter = ''
     difficulty: DifficultyFilter = ''
+    level: LevelFilter = LevelFilterAll()

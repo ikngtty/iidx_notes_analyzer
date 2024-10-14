@@ -146,6 +146,14 @@ python -m iidx_notes_analyzer analyze --mode=SP --tag=aa_amuro
 python -m iidx_notes_analyzer analyze --mode=SP --tag=aa_amuro --diff=A
 # 全曲のDPAのみ
 python -m iidx_notes_analyzer analyze --mode=DP --diff=A
+# SP☆10のみ
+python -m iidx_notes_analyzer analyze --mode=SP --lv=10
+# SP☆10以上
+python -m iidx_notes_analyzer analyze --mode=SP --lv=10-
+# SP☆10以下
+python -m iidx_notes_analyzer analyze --mode=SP --lv=-10
+# SP☆8〜☆10
+python -m iidx_notes_analyzer analyze --mode=SP --lv=8-10
 ```
 
 譜面データが保存された曲の内、指定された条件に当てはまる曲を対象にして分析し、

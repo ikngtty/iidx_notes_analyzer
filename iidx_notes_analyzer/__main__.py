@@ -37,6 +37,9 @@ p_analyze.add_argument('--tag', dest='music_tag', type=str, default='',
 p_analyze.add_argument('--diff', dest='difficulty', type=str, default='',
     help='B | N | H | A | L',
 )
+p_analyze.add_argument('--lv', dest='level', type=str, default='',
+    help='ex. 8 | 8-10 | 8- | -10'
+)
 p_analyze.add_argument('-a', '--show-all', action='store_true',
     help='show all chord patterns even if its count is 0',
 )
@@ -79,6 +82,7 @@ match args.subcommand:
         assert isinstance(args.version, str)
         assert isinstance(args.music_tag, str)
         assert isinstance(args.difficulty, str)
+        assert isinstance(args.level, str)
         assert isinstance(args.show_all, bool)
         assert isinstance(args.list, bool)
 
@@ -96,10 +100,14 @@ match args.subcommand:
             difficulty = condition.parse_difficulty_filter(args.difficulty)
         except ValueError as e:
             raise e
+        try:
+            level = condition.parse_level_filter(args.level)
+        except ValueError as e:
+            raise e
 
         main.analyze(
             play_mode=play_mode, version=version,
-            music_tag=music_tag, difficulty=difficulty,
+            music_tag=music_tag, difficulty=difficulty, level=level,
             show_all=args.show_all,
             show_score_list=args.list,
         )
