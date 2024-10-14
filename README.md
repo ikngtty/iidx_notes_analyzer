@@ -130,6 +130,8 @@ python -m iidx_notes_analyzer scrape_score DP '' '' A
 python -m iidx_notes_analyzer analyze
 # 実際に出てこない同時押しパターンも含め、全てのパターンを表示したい時
 python -m iidx_notes_analyzer analyze --show-all
+# ヒットした曲（譜面）が何か確認したい時
+python -m iidx_notes_analyzer analyze --list
 # SPのみ
 python -m iidx_notes_analyzer analyze --mode=SP
 # SPかつIIDX REDのみ

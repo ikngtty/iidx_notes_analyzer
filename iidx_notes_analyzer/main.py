@@ -73,6 +73,7 @@ def analyze(
     music_tag: condition.MusicTagFilter = '',
     difficulty: condition.DifficultyFilter = '',
     show_all: bool = False,
+    show_score_list: bool = False,
 ) -> None:
 
     cond = condition.ScoreFilter(
@@ -87,6 +88,17 @@ def analyze(
     ]
 
     print(f'Found {len(target_music_scores)} scores.')
+    if show_score_list:
+        # TODO: ソート＆グルーピングして分かりやすく表示
+        for music, score in target_music_scores:
+            print(
+                f'{score.kind.play_mode} '\
+                f'VER:{music.version} '\
+                f'[{music.tag}] '\
+                f'{music.title} '\
+                f'({score.kind.difficulty}) '\
+                f'☆{score.level}'
+            )
 
     chord_counts = Counter()
     for music, score in target_music_scores:

@@ -40,6 +40,9 @@ p_analyze.add_argument('--diff', dest='difficulty', type=str, default='',
 p_analyze.add_argument('-a', '--show-all', action='store_true',
     help='show all chord patterns even if its count is 0',
 )
+p_analyze.add_argument('-l', '--list', action='store_true',
+    help='show a list of found scores',
+)
 
 args = p.parse_args()
 match args.subcommand:
@@ -77,6 +80,7 @@ match args.subcommand:
         assert isinstance(args.music_tag, str)
         assert isinstance(args.difficulty, str)
         assert isinstance(args.show_all, bool)
+        assert isinstance(args.list, bool)
 
         # TODO: バリデーションエラーのメッセージを詳しく
         try:
@@ -93,7 +97,12 @@ match args.subcommand:
         except ValueError as e:
             raise e
 
-        main.analyze(play_mode, version, music_tag, difficulty, args.show_all)
+        main.analyze(
+            play_mode=play_mode, version=version,
+            music_tag=music_tag, difficulty=difficulty,
+            show_all=args.show_all,
+            show_score_list=args.list,
+        )
 
     case _:
         raise ValueError('unknown subcommand: ' + args.subcommand)
