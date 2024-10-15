@@ -136,8 +136,6 @@ def parse_filter_to_scrape(
         difficulty=parse_difficulty_filter(difficulty),
     )
 
-# TODO: 引数全部指定されてたら、譜面ページリストにデータがなくてもレベル0にして
-# 譜面取りに行ってくるようにしたい
 def scrape_score(
     filter: FilterToScrape = FilterToScrape(),
     debug: bool = False,
