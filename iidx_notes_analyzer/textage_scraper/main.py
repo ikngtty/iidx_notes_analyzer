@@ -1,9 +1,30 @@
 from dataclasses import dataclass
-from typing import Any, Self
+from typing import Any, Self, TypeGuard
 
 import playwright.sync_api as playwright
 
 from . import _textage, iidx, url
+
+def _is_str_list_dict(d: dict) -> TypeGuard[dict[str, list]]:
+    return all(isinstance(k, str) and isinstance(v, list) for k, v in d.items())
+
+def _is_raw_music_table(o: Any) -> TypeGuard[_textage.RawMusicTable]:
+    if not isinstance(o, dict):
+        return False
+    if not _is_str_list_dict(o):
+        return False
+    # 型の相違を検出するためのコード
+    _: _textage.RawMusicTable = o
+    return True
+
+def _is_raw_music_title_table(o: Any) -> TypeGuard[_textage.RawMusicTitleTable]:
+    if not isinstance(o, dict):
+        return False
+    if not _is_str_list_dict(o):
+        return False
+    # 型の相違を検出するためのコード
+    _: _textage.RawMusicTitleTable = o
+    return True
 
 @dataclass(frozen=True, slots=True)
 class MusicListPage:
@@ -52,11 +73,14 @@ class Client:
         # そのためWhole Ver.表示で曲データを落としてから、
         # Current Ver.表示時のコードを模倣してデータを絞り込む。
         self._page.goto(url.ALL_MUSIC_LIST_PAGE)
-        row_arcade_music_table: _textage.RawMusicTable = self._page.evaluate('actbl')
-        arcade_music_table = _textage.MusicTable(row_arcade_music_table)
-        row_title_table: _textage.RawMusicTitleTable = self._page.evaluate('titletbl')
-        title_table = _textage.MusicTitleTable(row_title_table)
 
+        raw_arcade_music_table = self._page.evaluate('actbl')
+        assert _is_raw_music_table(raw_arcade_music_table)
+        raw_title_table = self._page.evaluate('titletbl')
+        assert _is_raw_music_title_table(raw_title_table)
+
+        arcade_music_table = _textage.MusicTable(raw_arcade_music_table)
+        title_table = _textage.MusicTitleTable(raw_title_table)
         musics = _textage.to_arcade_musics(arcade_music_table, title_table)
         return MusicListPage(musics)
 
