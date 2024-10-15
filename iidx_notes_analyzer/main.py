@@ -140,6 +140,7 @@ def parse_filter_to_scrape(
 # 譜面取りに行ってくるようにしたい
 def scrape_score(
     filter: FilterToScrape = FilterToScrape(),
+    debug: bool = False,
 ) -> None:
 
     target_music_scores = list(persistence.load_musics(
@@ -154,6 +155,7 @@ def scrape_score(
 
     print(f'Found {len(target_music_scores)} scores.')
 
+    # TODO: debugモードではブラウザが起動されないようにしたい
     with textage.Client() as scraper:
         has_scraped = False
         for score_index, (music, score) in enumerate(target_music_scores):
@@ -178,6 +180,11 @@ def scrape_score(
 
             if does_skip:
                 print('skipped.')
+                continue
+
+            if debug:
+                print('do nothing. (debug mode)')
+                has_scraped = True
                 continue
 
             page_params = url.ScorePageParams.from_score(music, score)

@@ -22,6 +22,9 @@ p_scrape_score.add_argument('play_mode', nargs='?', type=str, default='')
 p_scrape_score.add_argument('version', nargs='?', type=str, default='')
 p_scrape_score.add_argument('music_tag', nargs='?', type=str, default='')
 p_scrape_score.add_argument('difficulty', nargs='?', type=str, default='')
+p_scrape_score.add_argument('-d', '--debug', action='store_true',
+    help='turn on debug mode (it does not scrape actually)',
+)
 
 p_analyze.add_argument('--mode', dest='play_mode', type=str, default='',
     help='SP | DP',
@@ -57,6 +60,7 @@ match args.subcommand:
         assert isinstance(args.version, str)
         assert isinstance(args.music_tag, str)
         assert isinstance(args.difficulty, str)
+        assert isinstance(args.debug, bool)
 
         try:
             filter = main.parse_filter_to_scrape(
@@ -69,7 +73,10 @@ match args.subcommand:
             # TODO: バリデーションエラーのメッセージを詳しく
             raise e
 
-        main.scrape_score(filter=filter)
+        main.scrape_score(
+            filter=filter,
+            debug=args.debug,
+        )
 
     case 'analyze':
         assert isinstance(args.play_mode, str)
