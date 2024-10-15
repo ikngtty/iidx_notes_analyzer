@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal
 
 from . import iidx
 
@@ -44,7 +44,7 @@ class MusicOption:
     def in_arcade(self) -> bool:
         return self._raw & 1 > 0
 
-RawMusicTableRow = list[RawMusicOption | Level | RawScoreOption | str]
+RawMusicTableRow = list[Any]
 class MusicTableRow:
     _raw: RawMusicTableRow
 
@@ -118,7 +118,7 @@ class MusicTable:
     def rows(self) -> dict[str, MusicTableRow]:
         return {k: MusicTableRow(v) for k, v in self._raw.items()}
 
-RawMusicTitleTableRow = list[int | str]
+RawMusicTitleTableRow = list[Any]
 class MusicTitleTableRow:
     _raw: RawMusicTitleTableRow
 
