@@ -214,7 +214,7 @@ def save_notes(
         raise FileExistsError(file_path)
 
     with open(file_path, 'w') as f:
-        json.dump(notes, f)
+        pjson.dump(notes, f)
 
 def load_notes(
     music: iidx.Music, score: iidx.Score,
