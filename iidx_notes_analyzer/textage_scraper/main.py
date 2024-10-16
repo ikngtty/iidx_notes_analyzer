@@ -5,13 +5,13 @@ import playwright.sync_api as playwright
 
 from . import _textage, iidx, url
 
-def _is_str_list_dict(d: dict) -> TypeGuard[dict[str, list]]:
+def _is_dict_of_str_and_list(d: dict) -> TypeGuard[dict[str, list]]:
     return all(isinstance(k, str) and isinstance(v, list) for k, v in d.items())
 
 def _is_raw_music_table(o: Any) -> TypeGuard[_textage.RawMusicTable]:
     if not isinstance(o, dict):
         return False
-    if not _is_str_list_dict(o):
+    if not _is_dict_of_str_and_list(o):
         return False
     # 型の相違を検出するためのコード
     _: _textage.RawMusicTable = o
@@ -20,7 +20,7 @@ def _is_raw_music_table(o: Any) -> TypeGuard[_textage.RawMusicTable]:
 def _is_raw_music_title_table(o: Any) -> TypeGuard[_textage.RawMusicTitleTable]:
     if not isinstance(o, dict):
         return False
-    if not _is_str_list_dict(o):
+    if not _is_dict_of_str_and_list(o):
         return False
     # 型の相違を検出するためのコード
     _: _textage.RawMusicTitleTable = o
