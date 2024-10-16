@@ -217,3 +217,38 @@ def to_arcade_musics(
         ))
 
     return iidx_musics
+
+RawNotePosition = int
+class NotePosition:
+    _raw: RawNotePosition
+
+    def __init__(self, raw: RawNotePosition) -> None:
+        self._raw = raw
+
+    # TODO: 解析が足りてない（よく分からない値として使ってる）
+    @property
+    def timing(self) -> int:
+        # 下から3桁目以上
+        return self._raw // 100
+
+    @property
+    def play_side(self) -> iidx.PlaySide:
+        # 下から2桁目
+        side = self._raw // 10 % 10
+        assert iidx.is_valid_for_play_side(side)
+        return side
+
+    @property
+    def key(self) -> iidx.KeyPosition:
+        # 下から1桁目
+        pos = self._raw % 10
+        pos_str = 'S' if pos == 0 else str(pos)
+        assert iidx.is_valid_for_key_position(pos_str)
+        return pos_str
+
+    def to_note(self) -> iidx.Note:
+        return iidx.Note(
+            timing=self.timing,
+            play_side=self.play_side,
+            key=self.key,
+        )

@@ -172,3 +172,16 @@ class Music:
             'title': self.title,
             'scores': [score.as_dict() for score in self.scores],
         }
+
+KeyPosition = Literal['S', '1', '2', '3', '4', '5', '6', '7']
+def is_valid_for_key_position(s: str) -> TypeGuard[KeyPosition]:
+    return s in ['S', '1', '2', '3', '4', '5', '6', '7']
+
+PlaySide = Literal[1, 2]
+def is_valid_for_play_side(i: int) -> TypeGuard[PlaySide]:
+    return i in [1, 2]
+
+class Note(NamedTuple):
+    timing: int # TexTage由来の正直よく分かってない数値。要解析。
+    play_side: PlaySide
+    key: KeyPosition

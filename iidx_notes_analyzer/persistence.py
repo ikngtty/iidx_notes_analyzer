@@ -198,7 +198,10 @@ def has_saved_notes(music: iidx.Music, score: iidx.Score) -> bool:
     )
     return os.path.exists(file_path)
 
-def save_notes(music: iidx.Music, score: iidx.Score, notes: list[int]) -> None:
+def save_notes(
+    music: iidx.Music, score: iidx.Score, notes: list[iidx.Note],
+) -> None:
+
     os.makedirs(
         _get_notes_dir_path(score.kind.play_mode, music.version),
         exist_ok=True,
@@ -213,12 +216,29 @@ def save_notes(music: iidx.Music, score: iidx.Score, notes: list[int]) -> None:
     with open(file_path, 'w') as f:
         json.dump(notes, f)
 
-def load_notes(music: iidx.Music, score: iidx.Score) -> Iterator[int]:
+def load_notes(
+    music: iidx.Music, score: iidx.Score,
+) -> Iterator[iidx.Note]:
+
     file_path = _get_notes_file_path(
         score.kind.play_mode, music.version, music.tag, score.kind.difficulty
     )
     with open(file_path) as f:
-        notes = json.load(f)
-        assert isinstance(notes, list)
-        assert util.is_list_of_int(notes)
-    yield from notes
+        raw_notes = json.load(f)
+        assert isinstance(raw_notes, list)
+        assert util.is_list_of_list(raw_notes)
+
+    for raw_note in raw_notes:
+        assert len(raw_note) == 3
+
+        timing = raw_note[0]
+        assert isinstance(timing, int)
+        play_side = raw_note[1]
+        assert isinstance(play_side, int)
+        assert iidx.is_valid_for_play_side(play_side)
+        key_position = raw_note[2]
+        assert isinstance(key_position, str)
+        assert iidx.is_valid_for_key_position(key_position)
+
+        note = iidx.Note(timing, play_side, key_position)
+        yield note

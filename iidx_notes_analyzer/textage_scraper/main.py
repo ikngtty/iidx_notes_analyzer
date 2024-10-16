@@ -26,13 +26,21 @@ def _is_raw_music_title_table(o: Any) -> TypeGuard[_textage.RawMusicTitleTable]:
     _: _textage.RawMusicTitleTable = o
     return True
 
+def _is_raw_note_position(o: Any) -> TypeGuard[_textage.RawNotePosition]:
+    return isinstance(o, _textage.RawNotePosition)
+
+def _is_raw_note_position_list(o: Any) -> TypeGuard[list[_textage.RawNotePosition]]:
+    if not isinstance(o, list):
+        return False
+    return all(_is_raw_note_position(item) for item in o)
+
 @dataclass(frozen=True, slots=True)
 class MusicListPage:
     musics: list[iidx.Music]
 
 @dataclass(frozen=True, slots=True)
 class ScorePage:
-    notes: list[int]
+    notes: list[iidx.Note]
 
 class Client:
     _playwright: playwright.Playwright
@@ -86,5 +94,8 @@ class Client:
 
     def scrape_score_page(self, url_params: url.ScorePageParams) -> ScorePage:
         self._page.goto(url_params.to_url())
-        notes = self._page.evaluate('npos')
+        raw_note_positions = self._page.evaluate('npos')
+        assert _is_raw_note_position_list(raw_note_positions)
+
+        notes = [_textage.NotePosition(raw).to_note() for raw in raw_note_positions]
         return ScorePage(notes)

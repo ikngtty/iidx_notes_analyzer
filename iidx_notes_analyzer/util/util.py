@@ -1,12 +1,17 @@
 from itertools import combinations, groupby
 from typing import Any, Iterable, Iterator, TypeGuard
 
-def to_chords(notes: Iterable[int]) -> Iterator[int]:
+from ..textage_scraper import iidx
+
+# TODO: Chord（同時押し）をintではなく専用クラスで表現
+
+def to_chords(notes: Iterable[iidx.Note]) -> Iterator[int]:
     # TODO: 1Pの譜面か2Pの譜面かを考慮してない（特にDP）
-    for _, notes_of_chord in groupby(notes, lambda note: note // 10):
+    for _, notes_of_chord in groupby(notes, lambda note: (note.timing, note.play_side)):
         chord = 0
         for note in notes_of_chord:
-            chord |= (1 << (note % 10))
+            pos = 0 if note.key == 'S' else int(note.key)
+            chord |= (1 << pos)
         yield chord
 
 def all_chord_patterns() -> Iterator[int]:
@@ -29,9 +34,9 @@ def chord_to_str(chord: int) -> str:
 def reversed_str(s: str) -> str:
     return s[::-1]
 
-# TODO: int以外にも使える汎用的な関数にしたい
-def is_list_of_int(l: list) -> TypeGuard[list[int]]:
-    return all(isinstance(item, int) for item in l)
+# TODO: `is_list_of_T`みたいにTを指定して使える汎用的な関数にしたい
+def is_list_of_list(l: list) -> TypeGuard[list[list]]:
+    return all(isinstance(item, list) for item in l)
 
 def is_list_of_dict(l: list) -> TypeGuard[list[dict]]:
     return all(isinstance(item, dict) for item in l)
