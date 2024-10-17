@@ -2,8 +2,8 @@ from collections import Counter
 from dataclasses import dataclass
 from time import sleep
 
-from . import persistence
-from .textage_scraper import iidx, main as textage, url
+from . import iidx, persistence
+from .textage_scraper import main as textage, url
 from .util import util
 
 # TODO: シグナルを受け付けて穏便にキャンセル終了できる機能

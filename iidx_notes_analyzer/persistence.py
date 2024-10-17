@@ -4,8 +4,8 @@ import json
 import os
 from typing import Iterator, Literal
 
+from . import iidx
 from .util import pjson, util
-from .textage_scraper import iidx
 
 _DATA_DIR_PATH = 'data'
 _MUSICS_FILE_PATH = os.path.join(_DATA_DIR_PATH, 'musics.json')

@@ -1,7 +1,7 @@
 from itertools import combinations, groupby
 from typing import Any, Iterable, Iterator, TypeGuard
 
-from ..textage_scraper import iidx
+from .. import iidx
 
 # TODO: Chord（同時押し）をintではなく専用クラスで表現
 
