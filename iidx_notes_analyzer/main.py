@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from time import sleep
 
 from . import iidx, persistence
-from .textage_scraper import main as textage, url
+from .adapter import textage_scraper as textage
 from .util import util
 
 # TODO: シグナルを受け付けて穏便にキャンセル終了できる機能
@@ -185,8 +185,7 @@ def scrape_score(
                 has_scraped = True
                 continue
 
-            page_params = url.ScorePageParams.from_score(music, score)
-            page = scraper.scrape_score_page(page_params)
+            page = scraper.scrape_score_page(music, score)
             has_scraped = True
             notes = page.notes
             notes.sort()
