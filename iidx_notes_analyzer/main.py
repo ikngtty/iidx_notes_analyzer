@@ -1,6 +1,5 @@
 from collections import Counter
 from dataclasses import dataclass
-from time import sleep
 
 from . import iidx, persistence
 from .adapter import textage_scraper as textage
@@ -153,18 +152,14 @@ def scrape_score(
 
     print(f'Found {len(target_music_scores)} scores.')
 
+    # スクレイピング先のサーバーへの負荷を下げるために1秒間隔を空ける
+    cool_exec = util.CoolExecutor(1)
+    cool_exec.wait_begun = lambda: print('(cool time...', end='', flush=True)
+    cool_exec.wait_ended = lambda: print(')', end='', flush=True)
+
     # TODO: debugモードではブラウザが起動されないようにしたい
     with textage.Client() as scraper:
-        has_scraped = False
         for score_index, (music, score) in enumerate(target_music_scores):
-            does_skip = persistence.has_saved_notes(music, score)
-
-            # スクレイピング先のサーバーへの負荷を下げるために1秒間隔を空ける
-            # TODO: scraperの方が自動でそれ管理してくれたらいいなぁ
-            if not does_skip and has_scraped:
-                sleep(1)
-                has_scraped = False
-
             page_text =\
                 f'{score.kind.play_mode} '\
                 f'VER:{music.version} '\
@@ -176,17 +171,15 @@ def scrape_score(
                 end='', flush=True
             )
 
-            if does_skip:
+            if persistence.has_saved_notes(music, score):
                 print('skipped.')
                 continue
 
             if debug:
                 print('do nothing. (debug mode)')
-                has_scraped = True
                 continue
 
-            page = scraper.scrape_score_page(music, score)
-            has_scraped = True
+            page = cool_exec(lambda: scraper.scrape_score_page(music, score))
             notes = page.notes
             notes.sort()
             persistence.save_notes(music, score, notes)
