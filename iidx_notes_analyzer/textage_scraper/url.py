@@ -15,7 +15,7 @@ def is_valid_for_play_side(s: str) -> TypeGuard[PlaySide]:
 
 @dataclass(frozen=True, slots=True)
 class ScorePageParams:
-    version: iidx.Version
+    version: str
     music_tag: str
     play_side: PlaySide
     difficulty: iidx.Difficulty
@@ -67,24 +67,24 @@ class ScorePageParams:
         return HOST + f'score/{ver}/{tag}.html?{side}{diff}{level}00'
 
     @classmethod
-    def encode_version(cls, version: iidx.Version) -> str:
-        match version.code:
+    def encode_version(cls, version: str) -> str:
+        match version:
             case 'CS':
                 return '0'
             case 'sub':
                 return 's'
             case _:
-                return version.code
+                return version
 
     @classmethod
-    def decode_version(cls, code: str) -> iidx.Version:
+    def decode_version(cls, code: str) -> str:
         match code:
             case '0':
-                return iidx.VersionCSOnly()
+                return 'CS'
             case 's':
-                return iidx.VersionAC('sub')
+                return 'sub'
             case _:
-                return iidx.VersionAC(code)
+                return code
 
     @classmethod
     def encode_play_side(cls, play_side: PlaySide) -> str:
