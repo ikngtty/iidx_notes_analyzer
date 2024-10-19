@@ -175,6 +175,9 @@ def scrape_score(
                 continue
 
             if scraper is None:
+                # 間隔をあけるのとその時のメッセージ出力だけ再現
+                cool_exec(lambda: None)
+
                 print('do nothing. (debug mode)')
                 continue
 
