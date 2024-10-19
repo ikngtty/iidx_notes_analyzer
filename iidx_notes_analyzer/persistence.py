@@ -228,6 +228,7 @@ def load_notes(
         assert isinstance(raw_notes, list)
         assert util.is_list_of_list(raw_notes)
 
+    notes = []
     for raw_note in raw_notes:
         assert len(raw_note) == 3
 
@@ -241,4 +242,7 @@ def load_notes(
         assert iidx.is_valid_for_key_position(key_position)
 
         note = iidx.Note(timing, play_side, key_position)
-        yield note
+        notes.append(note)
+
+    notes.sort()
+    yield from notes
