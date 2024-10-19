@@ -157,8 +157,7 @@ def scrape_score(
     cool_exec.wait_begun = lambda: print('(cool time...', end='', flush=True)
     cool_exec.wait_ended = lambda: print(')', end='', flush=True)
 
-    # TODO: debugモードではブラウザが起動されないようにしたい
-    with textage.Client() as scraper:
+    def with_scraper(scraper: textage.Client | None):
         for score_index, (music, score) in enumerate(target_music_scores):
             page_text =\
                 f'{score.kind.play_mode} '\
@@ -175,7 +174,7 @@ def scrape_score(
                 print('skipped.')
                 continue
 
-            if debug:
+            if scraper is None:
                 print('do nothing. (debug mode)')
                 continue
 
@@ -185,6 +184,12 @@ def scrape_score(
             persistence.save_notes(music, score, notes)
 
             print('finished.')
+
+    if debug:
+        with_scraper(None)
+    else:
+        with textage.Client() as scraper:
+            with_scraper(scraper)
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class FilterToAnalyze:
