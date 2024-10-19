@@ -182,9 +182,7 @@ def scrape_score(
                 continue
 
             page = cool_exec(lambda: scraper.scrape_score_page(music, score))
-            notes = page.notes
-            notes.sort()
-            persistence.save_notes(music, score, notes)
+            persistence.save_notes(music, score, page.notes)
 
             print('finished.')
 

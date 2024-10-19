@@ -213,6 +213,7 @@ def save_notes(
     if os.path.exists(file_path):
         raise FileExistsError(file_path)
 
+    notes.sort()
     with open(file_path, 'w') as f:
         pjson.dump(notes, f)
 
@@ -244,5 +245,5 @@ def load_notes(
         note = iidx.Note(timing, play_side, key_position)
         notes.append(note)
 
-    notes.sort()
+    assert notes == sorted(notes)
     yield from notes
