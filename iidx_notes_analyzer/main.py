@@ -253,7 +253,7 @@ def analyze(
 
     chord_counts = Counter()
     for music, score in target_music_scores:
-        notes = persistence.load_notes(music, score)
+        notes = list(persistence.load_notes(music, score))
         chords = util.to_chords(notes)
         chord_counts += Counter(chords)
 

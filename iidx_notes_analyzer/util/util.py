@@ -1,12 +1,14 @@
 from itertools import combinations, groupby
 import time
-from typing import Any, Callable, Iterable, Iterator, TypeGuard
+from typing import Any, Callable, Iterator, TypeGuard
 
 from .. import iidx
 
 # TODO: Chord（同時押し）をintではなく専用クラスで表現
 
-def to_chords(notes: Iterable[iidx.Note]) -> Iterator[int]:
+def to_chords(notes: list[iidx.Note]) -> Iterator[int]:
+    assert notes == sorted(notes)
+
     # TODO: 1Pの譜面か2Pの譜面かを考慮してない（特にDP）
     for _, notes_of_chord in groupby(notes, lambda note: (note.timing, note.play_side)):
         chord = 0
