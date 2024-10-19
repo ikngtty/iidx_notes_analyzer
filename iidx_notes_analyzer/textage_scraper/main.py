@@ -1,38 +1,9 @@
 from dataclasses import dataclass
-from typing import Any, Self, TypeGuard
+from typing import Any, Self
 
 import playwright.sync_api as playwright
 
 from . import _textage, iidx, url
-
-def _is_dict_of_str_and_list(d: dict) -> TypeGuard[dict[str, list]]:
-    return all(isinstance(k, str) and isinstance(v, list) for k, v in d.items())
-
-def _is_raw_music_table(o: Any) -> TypeGuard[_textage.RawMusicTable]:
-    if not isinstance(o, dict):
-        return False
-    if not _is_dict_of_str_and_list(o):
-        return False
-    # 型の相違を検出するためのコード
-    _: _textage.RawMusicTable = o
-    return True
-
-def _is_raw_music_title_table(o: Any) -> TypeGuard[_textage.RawMusicTitleTable]:
-    if not isinstance(o, dict):
-        return False
-    if not _is_dict_of_str_and_list(o):
-        return False
-    # 型の相違を検出するためのコード
-    _: _textage.RawMusicTitleTable = o
-    return True
-
-def _is_raw_note_position(o: Any) -> TypeGuard[_textage.RawNotePosition]:
-    return isinstance(o, _textage.RawNotePosition)
-
-def _is_raw_note_position_list(o: Any) -> TypeGuard[list[_textage.RawNotePosition]]:
-    if not isinstance(o, list):
-        return False
-    return all(_is_raw_note_position(item) for item in o)
 
 @dataclass(frozen=True, slots=True)
 class MusicListPage:
@@ -81,11 +52,8 @@ class Client:
         # そのためWhole Ver.表示で曲データを落としてから、
         # Current Ver.表示時のコードを模倣してデータを絞り込む。
         self._page.goto(url.ALL_MUSIC_LIST_PAGE)
-
         raw_arcade_music_table = self._page.evaluate('actbl')
-        assert _is_raw_music_table(raw_arcade_music_table)
         raw_title_table = self._page.evaluate('titletbl')
-        assert _is_raw_music_title_table(raw_title_table)
 
         arcade_music_table = _textage.MusicTable(raw_arcade_music_table)
         title_table = _textage.MusicTitleTable(raw_title_table)
@@ -95,7 +63,7 @@ class Client:
     def scrape_score_page(self, url_params: url.ScorePageParams) -> ScorePage:
         self._page.goto(url_params.to_url())
         raw_note_positions = self._page.evaluate('npos')
-        assert _is_raw_note_position_list(raw_note_positions)
+        assert isinstance(raw_note_positions, list)
 
         notes = [_textage.NotePosition(raw).to_note() for raw in raw_note_positions]
         return ScorePage(notes)

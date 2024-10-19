@@ -1,31 +1,34 @@
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any, TypeGuard
 
 from . import iidx
 
-NoLevel = Literal[0]
-Level = NoLevel | iidx.Level
+def _is_str_dict(d: dict) -> TypeGuard[dict[str, Any]]:
+    return all(isinstance(key, str) for key in d)
 
-RawScoreOption = int
 class ScoreOption:
-    _raw: RawScoreOption
+    _has_URL: bool
+    _level_is_up_to_12: bool
+    _in_arcade: bool
 
-    def __init__(self, raw: RawScoreOption) -> None:
-        self._raw = raw
+    def __init__(self, raw: Any) -> None:
+        assert isinstance(raw, int)
+        self._has_URL = raw & 1 > 0
+        self._level_is_up_to_12 = raw & 2 > 0
+        self._in_arcade = raw & 4 > 0
+        # `self._raw & 8`はCN関係っぽい
 
     @property
     def has_URL(self) -> bool:
-        return self._raw & 1 > 0
+        return self._has_URL
 
     @property
     def level_is_up_to_12(self) -> bool:
-        return self._raw & 2 > 0
+        return self._level_is_up_to_12
 
     @property
     def in_arcade(self) -> bool:
-        return self._raw & 4 > 0
-
-    # `self._raw & 8`はCN関係っぽい
+        return self._in_arcade
 
 @dataclass(frozen=True, slots=True)
 class Score:
@@ -33,156 +36,156 @@ class Score:
     level: iidx.Level
     option: ScoreOption
 
-RawMusicOption = int
 class MusicOption:
-    _raw: RawMusicOption
+    _in_arcade: bool
 
-    def __init__(self, raw: RawMusicOption) -> None:
-        self._raw = raw
+    def __init__(self, raw: Any) -> None:
+        assert isinstance(raw, int)
+        self._in_arcade = raw & 1 > 0
 
     @property
     def in_arcade(self) -> bool:
-        return self._raw & 1 > 0
+        return self._in_arcade
 
-RawMusicTableRow = list[Any]
 class MusicTableRow:
-    _raw: RawMusicTableRow
+    _option: MusicOption
+    _scores: dict[iidx.ScoreKind, Score | None]
+    _italic_subtitle: str
 
-    def __init__(self, raw: RawMusicTableRow) -> None:
+    def __init__(self, raw: Any) -> None:
+        assert isinstance(raw, list)
         assert len(raw) == 23 or len(raw) == 24
-        self._raw = raw
+
+        self._option = MusicOption(raw[0])
+
+        def get_score(
+            kind: iidx.ScoreKind, level: Any, option: Any,
+        ) -> Score | None:
+
+            assert isinstance(level, int)
+            if level == 0:
+                return None
+            assert iidx.is_valid_for_level(level)
+            return Score(kind, level, ScoreOption(option))
+
+        self._scores = {
+            kind: get_score(kind, level, option) for kind, level, option in [
+                # `raw[1]`, `raw[2]`についてはSBo（譜面）と書かれていた。
+                # BEGINNERの亜種みたいなのを示しているっぽい。
+                # ACで出る以前にCSで出てた譜面の違うBEGINNERを示している？
+                (iidx.ScoreKind('SP', 'B'), raw[3], raw[4]),
+                (iidx.ScoreKind('SP', 'N'), raw[5], raw[6]),
+                (iidx.ScoreKind('SP', 'H'), raw[7], raw[8]),
+                (iidx.ScoreKind('SP', 'A'), raw[9], raw[10]),
+                (iidx.ScoreKind('SP', 'L'), raw[11], raw[12]),
+                (iidx.ScoreKind('DP', 'B'), raw[13], raw[14]),
+                (iidx.ScoreKind('DP', 'N'), raw[15], raw[16]),
+                (iidx.ScoreKind('DP', 'H'), raw[17], raw[18]),
+                (iidx.ScoreKind('DP', 'A'), raw[19], raw[20]),
+                (iidx.ScoreKind('DP', 'L'), raw[21], raw[22]),
+            ]
+        }
+
+        if len(raw) <= 23:
+            self._italic_subtitle = ''
+        else:
+            assert isinstance(raw[23], str)
+            self._italic_subtitle = raw[23]
 
     @property
     def option(self) -> MusicOption:
-        raw = self._raw[0]
-        assert isinstance(raw, RawMusicOption)
-        return MusicOption(raw)
-
-    def score(self, kind: iidx.ScoreKind) -> Score | None:
-        match kind:
-            # `self._raw[1]`, `self._raw[2]`についてはSBo（譜面）と書かれていた。
-            # BEGINNERの亜種みたいなのを示しているっぽい。
-            # ACで出る以前にCSで出てた譜面の違うBEGINNERを示している？
-            case iidx.ScoreKind('SP', 'B'):
-                level, option = self._raw[3], self._raw[4]
-            case iidx.ScoreKind('SP', 'N'):
-                level, option = self._raw[5], self._raw[6]
-            case iidx.ScoreKind('SP', 'H'):
-                level, option = self._raw[7], self._raw[8]
-            case iidx.ScoreKind('SP', 'A'):
-                level, option = self._raw[9], self._raw[10]
-            case iidx.ScoreKind('SP', 'L'):
-                level, option = self._raw[11], self._raw[12]
-            case iidx.ScoreKind('DP', 'B'):
-                level, option = self._raw[13], self._raw[14]
-            case iidx.ScoreKind('DP', 'N'):
-                level, option = self._raw[15], self._raw[16]
-            case iidx.ScoreKind('DP', 'H'):
-                level, option = self._raw[17], self._raw[18]
-            case iidx.ScoreKind('DP', 'A'):
-                level, option = self._raw[19], self._raw[20]
-            case iidx.ScoreKind('DP', 'L'):
-                level, option = self._raw[21], self._raw[22]
-            case _:
-                raise ValueError('unexpected score kind: ' + str(kind))
-
-        assert isinstance(level, int)
-        if level == 0:
-            return None
-        assert iidx.is_valid_for_level(level)
-        assert isinstance(option, RawScoreOption)
-
-        return Score(kind, level, ScoreOption(option))
+        return self._option
 
     @property
     def scores(self) -> dict[iidx.ScoreKind, Score | None]:
-        return {kind: self.score(kind) for kind in iidx.ScoreKind.all()}
+        return self._scores.copy()
 
     @property
     def italic_subtitle(self) -> str:
-        if len(self._raw) < 24:
-            return ''
+        return self._italic_subtitle
 
-        raw = self._raw[23]
-        assert isinstance(raw, str)
-        return raw
-
-RawMusicTable = dict[str, RawMusicTableRow]
 class MusicTable:
-    _raw: RawMusicTable
+    _rows: dict[str, MusicTableRow]
 
-    def __init__(self, raw: RawMusicTable) -> None:
-        self._raw = raw
+    def __init__(self, raw: Any) -> None:
+        assert isinstance(raw, dict)
+        assert _is_str_dict(raw)
+        self._rows = {
+            k: MusicTableRow(v) for k, v in raw.items()
+        }
 
     @property
     def rows(self) -> dict[str, MusicTableRow]:
-        return {k: MusicTableRow(v) for k, v in self._raw.items()}
+        return self._rows.copy()
 
-RawMusicTitleTableRow = list[Any]
 class MusicTitleTableRow:
-    _raw: RawMusicTitleTableRow
+    _version: str
+    _genre: str
+    _artist: str
+    _title: str
+    _subtitle: str
 
-    def __init__(self, raw: RawMusicTitleTableRow) -> None:
+    def __init__(self, raw: Any) -> None:
+        assert isinstance(raw, list)
         assert len(raw) == 6 or len(raw) == 7
-        self._raw = raw
+
+        assert isinstance(raw[0], int)
+        match raw[0]:
+            case 0:
+                self._version = 'CS'
+            case 35:
+                self._version = 'sub'
+            case _:
+                self._version = str(raw[0])
+
+        assert isinstance(raw[3], str)
+        self._genre = raw[3]
+
+        assert isinstance(raw[4], str)
+        self._artist = raw[4]
+
+        assert isinstance(raw[5], str)
+        self._title = raw[5]
+
+        if len(raw) <= 6:
+            self._subtitle = ''
+        else:
+            assert isinstance(raw[6], str)
+            self._subtitle = raw[6]
 
     @property
     def version(self) -> str:
-        raw = self._raw[0]
-        assert isinstance(raw, int)
-
-        match raw:
-            case 0:
-                return 'CS'
-            case 35:
-                return 'sub'
-            case _:
-                return str(raw)
+        return self._version
 
     @property
     def genre(self) -> str:
-        raw = self._raw[3]
-        assert isinstance(raw, str)
-        return raw
+        return self._genre
 
     @property
     def artist(self) -> str:
-        raw = self._raw[4]
-        assert isinstance(raw, str)
-        return raw
+        return self._artist
 
     @property
     def title(self) -> str:
-        raw = self._raw[5]
-        assert isinstance(raw, str)
-        return raw
+        return self._title
 
     @property
     def subtitle(self) -> str:
-        if len(self._raw) < 7:
-            return ''
+        return self._subtitle
 
-        raw = self._raw[6]
-        assert isinstance(raw, str)
-        return raw
-
-RawMusicTitleTable = dict[str, RawMusicTitleTableRow]
 class MusicTitleTable:
-    _raw: RawMusicTitleTable
+    _rows: dict[str, MusicTitleTableRow]
 
-    def __init__(self, raw: RawMusicTitleTable) -> None:
-        self._raw = raw
-
-    def row(self, tag: str) -> MusicTitleTableRow | None:
-        if tag not in self._raw:
-            return None
-
-        raw = self._raw[tag]
-        return MusicTitleTableRow(raw)
+    def __init__(self, raw: Any) -> None:
+        assert isinstance(raw, dict)
+        assert _is_str_dict(raw)
+        self._rows = {
+            k: MusicTitleTableRow(v) for k, v in raw.items()
+        }
 
     @property
     def rows(self) -> dict[str, MusicTitleTableRow]:
-        return {k: MusicTitleTableRow(v) for k, v in self._raw.items()}
+        return self._rows.copy()
 
 # TexTage解析に最適化されたデータ型から汎用的なデータ型へ変換。
 # Current Ver.表示時の絞り込みロジックを模倣。
@@ -195,15 +198,16 @@ def to_arcade_musics(
         if not row.option.in_arcade:
             continue
 
-        titleRow = titleTable.row(music_tag)
-        if not titleRow:
+        try:
+            titleRow = titleTable.rows[music_tag]
+        except KeyError:
             raise RuntimeError('not found in music title table: ' + music_tag)
 
         iidx_scores = [
             iidx.Score(
-                music_tag, score_kind, score.level, score.option.has_URL
+                music_tag, score.kind, score.level, score.option.has_URL
             )
-            for score_kind, score in row.scores.items()
+            for score in row.scores.values()
             if score and score.option.in_arcade
         ]
 
@@ -218,33 +222,37 @@ def to_arcade_musics(
 
     return iidx_musics
 
-RawNotePosition = int
 class NotePosition:
-    _raw: RawNotePosition
+    _timing: int
+    _play_side: iidx.PlaySide
+    _key: iidx.KeyPosition
 
-    def __init__(self, raw: RawNotePosition) -> None:
-        self._raw = raw
+    def __init__(self, raw: Any) -> None:
+        assert isinstance(raw, int)
+
+        self._timing = raw // 100   # 下から3桁目以上
+
+        play_side = raw // 10 % 10  # 下から2桁目
+        assert iidx.is_valid_for_play_side(play_side)
+        self._play_side = play_side
+
+        key_int = raw % 10          # 下から1桁目
+        key = 'S' if key_int == 0 else str(key_int)
+        assert iidx.is_valid_for_key_position(key)
+        self._key = key
 
     # TODO: 解析が足りてない（よく分からない値として使ってる）
     @property
     def timing(self) -> int:
-        # 下から3桁目以上
-        return self._raw // 100
+        return self._timing
 
     @property
     def play_side(self) -> iidx.PlaySide:
-        # 下から2桁目
-        side = self._raw // 10 % 10
-        assert iidx.is_valid_for_play_side(side)
-        return side
+        return self._play_side
 
     @property
     def key(self) -> iidx.KeyPosition:
-        # 下から1桁目
-        pos = self._raw % 10
-        pos_str = 'S' if pos == 0 else str(pos)
-        assert iidx.is_valid_for_key_position(pos_str)
-        return pos_str
+        return self._key
 
     def to_note(self) -> iidx.Note:
         return iidx.Note(
