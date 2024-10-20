@@ -193,6 +193,7 @@ def to_arcade_musics(
     arcadeMusicTable: MusicTable,
     titleTable: MusicTitleTable,
 ) -> list[iidx.Music]:
+
     iidx_musics = []
     for music_tag, row in arcadeMusicTable.rows.items():
         if not row.option.in_arcade:

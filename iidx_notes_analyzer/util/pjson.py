@@ -59,6 +59,7 @@ class _JSONChunksGeneratorAtomic(_JSONChunksGenerator):
         self, config: _Config,
         obj: Any,
     ) -> None:
+
         super().__init__(config)
         self._text = json.dumps(obj, ensure_ascii=config.ensure_ascii)
 
@@ -78,6 +79,7 @@ class _JSONChunksGeneratorArray(_JSONChunksGenerator):
         self, config: _Config,
         children: list[_JSONChunksGenerator],
     ) -> None:
+
         super().__init__(config)
         self._children = children
 
@@ -121,6 +123,7 @@ class _JSONChunksGeneratorObject(_JSONChunksGenerator):
         self, config: _Config,
         children: dict[str, _JSONChunksGenerator],
     ) -> None:
+
         super().__init__(config)
         self._children = children
 
@@ -191,6 +194,7 @@ def dump(
     obj: Any, fp: TextIO,
     width: int = 80, indent: int = 2, ensure_ascii: bool = True,
 ) -> None:
+
     config = _Config(width, indent, ensure_ascii)
     gen = _make_generator(config, obj)
     for chunk in gen.pretty():
@@ -200,6 +204,7 @@ def dumps(
     obj: Any,
     width: int = 80, indent: int = 2, ensure_ascii: bool = True,
 ) -> str:
+
     config = _Config(width, indent, ensure_ascii)
     gen = _make_generator(config, obj)
     return ''.join(gen.pretty())

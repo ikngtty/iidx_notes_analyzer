@@ -40,6 +40,7 @@ class VersionFilterRange(VersionFilter):
         start: iidx.VersionAC | None,
         end: iidx.VersionAC | None,
     ) -> None:
+
         super().__init__()
         if start is not None and end is not None and start > end:
             raise ValueError(str(start), str(end))
@@ -84,6 +85,7 @@ class LevelFilterRange(LevelFilter):
         start: iidx.Level | None,
         end: iidx.Level | None,
     ) -> None:
+
         super().__init__()
         if start is not None and end is not None and start > end:
             raise ValueError(start, end)
@@ -111,6 +113,7 @@ def _match_version_filter(
     music: iidx.Music,
     cond: VersionFilter,
 ) -> bool:
+
     match cond:
         case VersionFilterAll():
             return True
@@ -132,6 +135,7 @@ def _match_level_filter(
     score: iidx.Score,
     cond: LevelFilter,
 ) -> bool:
+
     match cond:
         case LevelFilterAll():
             return True
@@ -188,6 +192,7 @@ def _get_notes_file_path(
     play_mode: iidx.PlayMode, version: iidx.Version,
     music_tag: str, difficulty: iidx.Difficulty,
 ) -> str:
+
     dir = _get_notes_dir_path(play_mode, version)
     filename = f'{music_tag}({difficulty}).json'
     return os.path.join(dir, filename)
