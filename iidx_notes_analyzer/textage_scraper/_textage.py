@@ -187,9 +187,9 @@ class MusicTitleTable:
     def rows(self) -> dict[str, MusicTitleTableRow]:
         return self._rows.copy()
 
-# TexTage解析に最適化されたデータ型から汎用的なデータ型へ変換。
-# Current Ver.表示時の絞り込みロジックを模倣。
-def to_arcade_musics(
+# TexTage解析データを元にAC曲データを構築。
+# この際、Current Ver.表示時の絞り込みロジックを模倣。
+def construct_arcade_musics(
     arcadeMusicTable: MusicTable,
     titleTable: MusicTitleTable,
 ) -> list[iidx.Music]:

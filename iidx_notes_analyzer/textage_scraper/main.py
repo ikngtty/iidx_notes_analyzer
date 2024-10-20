@@ -57,7 +57,7 @@ class Client:
 
         arcade_music_table = _textage.MusicTable(raw_arcade_music_table)
         title_table = _textage.MusicTitleTable(raw_title_table)
-        musics = _textage.to_arcade_musics(arcade_music_table, title_table)
+        musics = _textage.construct_arcade_musics(arcade_music_table, title_table)
         return MusicListPage(musics)
 
     def scrape_score_page(self, url_params: url.ScorePageParams) -> ScorePage:
