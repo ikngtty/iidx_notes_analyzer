@@ -255,7 +255,7 @@ class NotePosition:
     def key(self) -> iidx.KeyPosition:
         return self._key
 
-    def to_note(self) -> iidx.Note:
+    def to_entity(self) -> iidx.Note:
         return iidx.Note(
             timing=self.timing,
             play_side=self.play_side,

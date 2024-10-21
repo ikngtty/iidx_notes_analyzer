@@ -65,5 +65,5 @@ class Client:
         raw_note_positions = self._page.evaluate('npos')
         assert isinstance(raw_note_positions, list)
 
-        notes = [_textage.NotePosition(raw).to_note() for raw in raw_note_positions]
+        notes = [_textage.NotePosition(raw).to_entity() for raw in raw_note_positions]
         return ScorePage(notes)
