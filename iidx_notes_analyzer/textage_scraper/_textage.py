@@ -226,7 +226,7 @@ def construct_arcade_musics(
 class NotePosition:
     _timing: int
     _play_side: iidx.PlaySide
-    _key: iidx.KeyPosition
+    _lane: iidx.Lane
 
     def __init__(self, raw: Any) -> None:
         assert isinstance(raw, int)
@@ -237,10 +237,10 @@ class NotePosition:
         assert iidx.is_valid_for_play_side(play_side)
         self._play_side = play_side
 
-        key_int = raw % 10          # 下から1桁目
-        key = 'S' if key_int == 0 else str(key_int)
-        assert iidx.is_valid_for_key_position(key)
-        self._key = key
+        lane_int = raw % 10          # 下から1桁目
+        lane = 'S' if lane_int == 0 else str(lane_int)
+        assert iidx.is_valid_for_lane(lane)
+        self._lane = lane
 
     # TODO: 解析が足りてない（よく分からない値として使ってる）
     @property
@@ -252,12 +252,12 @@ class NotePosition:
         return self._play_side
 
     @property
-    def key(self) -> iidx.KeyPosition:
-        return self._key
+    def lane(self) -> iidx.Lane:
+        return self._lane
 
     def to_entity(self) -> iidx.Note:
         return iidx.Note(
             timing=self.timing,
             play_side=self.play_side,
-            key=self.key,
+            lane=self.lane,
         )

@@ -13,7 +13,7 @@ def to_chords(notes: list[iidx.Note]) -> Iterator[int]:
     for _, notes_of_chord in groupby(notes, lambda note: (note.timing, note.play_side)):
         chord = 0
         for note in notes_of_chord:
-            pos = 0 if note.key == 'S' else int(note.key)
+            pos = 0 if note.lane == 'S' else int(note.lane)
             chord |= (1 << pos)
         yield chord
 

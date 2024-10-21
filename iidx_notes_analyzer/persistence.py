@@ -243,11 +243,11 @@ def load_notes(
         play_side = raw_note[1]
         assert isinstance(play_side, int)
         assert iidx.is_valid_for_play_side(play_side)
-        key_position = raw_note[2]
-        assert isinstance(key_position, str)
-        assert iidx.is_valid_for_key_position(key_position)
+        lane = raw_note[2]
+        assert isinstance(lane, str)
+        assert iidx.is_valid_for_lane(lane)
 
-        note = iidx.Note(timing, play_side, key_position)
+        note = iidx.Note(timing, play_side, lane)
         notes.append(note)
 
     assert notes == sorted(notes)

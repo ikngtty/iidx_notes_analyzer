@@ -146,9 +146,9 @@ class Music:
             'scores': [score.as_dict() for score in self.scores],
         }
 
-KeyPosition = tex_iidx.KeyPosition
-def is_valid_for_key_position(s: str) -> TypeGuard[KeyPosition]:
-    return tex_iidx.is_valid_for_key_position(s)
+Lane = tex_iidx.Lane
+def is_valid_for_lane(s: str) -> TypeGuard[Lane]:
+    return tex_iidx.is_valid_for_lane(s)
 
 PlaySide = tex_iidx.PlaySide
 def is_valid_for_play_side(i: int) -> TypeGuard[PlaySide]:
