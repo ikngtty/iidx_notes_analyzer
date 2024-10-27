@@ -241,6 +241,7 @@ class NotePosition:
         lane = 'S' if lane_int == 0 else str(lane_int)
         assert iidx.is_valid_for_lane(lane)
         self._lane = lane
+        # TODO: 5thのsometime(DPA)にて下1桁目が9のデータが出現。要調査。
 
     # TODO: 解析が足りてない（よく分からない値として使ってる）
     @property
