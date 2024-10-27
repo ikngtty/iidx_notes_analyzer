@@ -19,8 +19,8 @@ def to_chords(notes: list[iidx.Note]) -> Iterator[int]:
 
 def all_chord_patterns() -> Iterator[int]:
     for has_scratch in [False, True]:
-        for note_count in range(1, 8):
-            for keys in combinations(range(1, 8), note_count):
+        for key_count in range(1, 8):
+            for keys in combinations(range(1, 8), key_count):
                 chord = int(has_scratch)
                 for key in keys:
                     chord |= 1 << key
