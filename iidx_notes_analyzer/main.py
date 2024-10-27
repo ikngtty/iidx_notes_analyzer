@@ -252,12 +252,14 @@ def analyze(
     chord_counts = Counter()
     for music, score in target_music_scores:
         notes = list(persistence.load_notes(music, score))
-        chords = util.to_chords(notes)
+        chords = iidx.to_chords(notes)
         chord_counts += Counter(chords)
 
-    for chord in util.all_chord_patterns():
+    # TODO: SPの時は2P側のパターンは表示しない
+    # TODO: DPの時に1P,2Pを別々に集計するor2Pをフリップして1Pと合計する
+    for chord in iidx.all_chord_patterns():
         count = chord_counts[chord]
         if show_all or count > 0:
-            chord_str = util.chord_to_str(chord)
+            chord_str = chord.show_lanes()
             count_str = str(count) if count > 0 else ''
             print(f'{chord_str}:{count_str}')

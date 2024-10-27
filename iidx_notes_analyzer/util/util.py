@@ -1,41 +1,5 @@
-from itertools import combinations, groupby
 import time
-from typing import Any, Callable, Iterator, TypeGuard
-
-from .. import iidx
-
-# TODO: Chord（同時押し）をintではなく専用クラスで表現
-
-def to_chords(notes: list[iidx.Note]) -> Iterator[int]:
-    assert notes == sorted(notes)
-
-    # TODO: 1Pの譜面か2Pの譜面かを考慮してない（特にDP）
-    for _, notes_of_chord in groupby(notes, lambda note: (note.timing, note.play_side)):
-        chord = 0
-        for note in notes_of_chord:
-            pos = 0 if note.lane == 'S' else int(note.lane)
-            chord |= (1 << pos)
-        yield chord
-
-def all_chord_patterns() -> Iterator[int]:
-    for has_scratch in [False, True]:
-        for key_count in range(1, 8):
-            for keys in combinations(range(1, 8), key_count):
-                chord = int(has_scratch)
-                for key in keys:
-                    chord |= 1 << key
-                yield chord
-
-def chord_to_str(chord: int) -> str:
-    scratch_str = 'S' if chord & 1 == 1 else ' '
-    keys = chord >> 1
-    keys_str = reversed_str(f'{keys:07b}')\
-        .replace('1', '|')\
-        .replace('0', '_')
-    return scratch_str + keys_str
-
-def reversed_str(s: str) -> str:
-    return s[::-1]
+from typing import Any, Callable, TypeGuard
 
 # TODO: `is_list_of_T`みたいにTを指定して使える汎用的な関数にしたい
 def is_list_of_list(l: list) -> TypeGuard[list[list]]:
