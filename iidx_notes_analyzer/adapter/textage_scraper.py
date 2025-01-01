@@ -23,7 +23,7 @@ def _score_to_origin(score: iidx.Score) -> origin_iidx.Score:
 def _music_from_origin(origin_music: origin_iidx.Music) -> iidx.Music:
     return iidx.Music(
         origin_music.tag,
-        iidx.version_from_code(origin_music.version),
+        iidx.to_version(origin_music.version),
         origin_music.genre,
         origin_music.artist,
         origin_music.title,

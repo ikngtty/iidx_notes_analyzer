@@ -82,7 +82,7 @@ class VersionCSOnly(Version):
     def code(self) -> str:
         return 'CS'
 
-def version_from_code(code: str) -> Version:
+def to_version(code: str) -> Version:
     if VersionCSOnly.code_is_valid(code):
         return VersionCSOnly()
     if VersionAC.code_is_valid(code):
@@ -130,7 +130,7 @@ class Music:
         # TODO: validate
         return cls(
             d['tag'],
-            version_from_code(d['version']),
+            to_version(d['version']),
             d['genre'],
             d['artist'],
             d['title'],

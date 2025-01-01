@@ -29,7 +29,7 @@ def parse_version_filter(s: str) -> VersionFilter:
     match len(ss):
         case 1:
             try:
-                version = iidx.version_from_code(s)
+                version = iidx.to_version(s)
             except ValueError as e:
                 raise e
 
