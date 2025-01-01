@@ -127,33 +127,30 @@ python -m iidx_notes_analyzer scrape_score DP '' '' A
 
 ```console
 # 本ツールのあるフォルダ上で実行してください。
-python -m iidx_notes_analyzer analyze
+# ※SPかDPかの指定は必須
+python -m iidx_notes_analyzer analyze SP
 # 実際に出てこない同時押しパターンも含め、全てのパターンを表示したい時
-python -m iidx_notes_analyzer analyze --show-all
+python -m iidx_notes_analyzer analyze SP --show-all
 # ヒットした曲（譜面）が何か確認したい時
-python -m iidx_notes_analyzer analyze --list
-# SPのみ
-python -m iidx_notes_analyzer analyze --mode=SP
-# SPかつIIDX REDのみ
-python -m iidx_notes_analyzer analyze --mode=SP --ver=11
-# SPかつIIDX RED以降全て
-python -m iidx_notes_analyzer analyze --mode=SP --ver=11-
-# SPかつIIDX REDからIIDX GOLDまで
-python -m iidx_notes_analyzer analyze --mode=SP --ver=11-14
-# SPかつAAのみ（曲に対応するIDはTexTageのURLを元に自分で調べてください）
-python -m iidx_notes_analyzer analyze --mode=SP --tag=aa_amuro
-# AA(SPA)のみ
-python -m iidx_notes_analyzer analyze --mode=SP --tag=aa_amuro --diff=A
-# 全曲のDPAのみ
-python -m iidx_notes_analyzer analyze --mode=DP --diff=A
-# SP☆10のみ
-python -m iidx_notes_analyzer analyze --mode=SP --lv=10
-# SP☆10以上
-python -m iidx_notes_analyzer analyze --mode=SP --lv=10-
-# SP☆10以下
-python -m iidx_notes_analyzer analyze --mode=SP --lv=-10
-# SP☆8〜☆10
-python -m iidx_notes_analyzer analyze --mode=SP --lv=8-10
+python -m iidx_notes_analyzer analyze SP --list
+# IIDX REDのみ
+python -m iidx_notes_analyzer analyze SP --ver=11
+# IIDX RED以降全て
+python -m iidx_notes_analyzer analyze SP --ver=11-
+# IIDX REDからIIDX GOLDまで
+python -m iidx_notes_analyzer analyze SP --ver=11-14
+# AAのみ（曲に対応するIDはTexTageのURLを元に自分で調べてください）
+python -m iidx_notes_analyzer analyze SP --tag=aa_amuro
+# AA(A)のみ
+python -m iidx_notes_analyzer analyze SP --tag=aa_amuro --diff=A
+# ☆10のみ
+python -m iidx_notes_analyzer analyze SP --lv=10
+# ☆10以上
+python -m iidx_notes_analyzer analyze SP --lv=10-
+# ☆10以下
+python -m iidx_notes_analyzer analyze SP --lv=-10
+# ☆8〜☆10
+python -m iidx_notes_analyzer analyze SP --lv=8-10
 ```
 
 譜面データが保存された曲の内、指定された条件に当てはまる曲を対象にして分析し、
@@ -191,7 +188,7 @@ Scraping 16/16 SP VER:5 [v_taka] V (A) ...(cool time...)finished.
 解析を実行します。
 
 ```console
-python -m iidx_notes_analyzer analyze
+python -m iidx_notes_analyzer analyze SP
 ```
 
 ```console

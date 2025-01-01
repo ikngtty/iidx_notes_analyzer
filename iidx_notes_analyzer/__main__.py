@@ -26,7 +26,7 @@ p_scrape_score.add_argument('-d', '--debug', action='store_true',
     help='turn on debug mode (it does not scrape actually)',
 )
 
-p_analyze.add_argument('--mode', dest='play_mode', type=str, default='',
+p_analyze.add_argument('play_mode', type=str,
     help='SP | DP',
 )
 p_analyze.add_argument('--ver', dest='version', type=str, default='',

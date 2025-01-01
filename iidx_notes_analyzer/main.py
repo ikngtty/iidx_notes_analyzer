@@ -10,12 +10,14 @@ from .util import util
 HasURLFilter = persistence.HasURLFilter
 
 PlayModeFilter = persistence.PlayModeFilter
-def parse_play_mode_filter(s: str) -> PlayModeFilter:
-    if s == '':
-        return ''
+def to_play_mode(s: str) -> iidx.PlayMode:
     if not iidx.is_valid_for_play_mode(s):
         raise ValueError(s)
     return s
+def parse_play_mode_filter(s: str) -> PlayModeFilter:
+    if s == '':
+        return ''
+    return to_play_mode(s)
 
 VersionFilter = persistence.VersionFilter
 VersionFilterAll = persistence.VersionFilterAll
@@ -194,14 +196,14 @@ def scrape_score(
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class FilterToAnalyze:
-    play_mode: PlayModeFilter = ''
+    play_mode: iidx.PlayMode
     version: VersionFilter = VersionFilterAll()
     music_tag: MusicTagFilter = ''
     difficulty: DifficultyFilter = ''
     level: LevelFilter = LevelFilterAll()
 
 def parse_filter_to_analyze(
-    play_mode: str = '',
+    play_mode: str,
     version: str = '',
     music_tag: str = '',
     difficulty: str = '',
@@ -209,7 +211,7 @@ def parse_filter_to_analyze(
 ) -> FilterToAnalyze:
 
     return FilterToAnalyze(
-        play_mode=parse_play_mode_filter(play_mode),
+        play_mode=to_play_mode(play_mode),
         version=parse_version_filter(version),
         music_tag=music_tag,
         difficulty=parse_difficulty_filter(difficulty),
@@ -217,7 +219,7 @@ def parse_filter_to_analyze(
     )
 
 def analyze(
-    filter: FilterToAnalyze = FilterToAnalyze(),
+    filter: FilterToAnalyze,
     show_all: bool = False,
     show_score_list: bool = False,
 ) -> None:
