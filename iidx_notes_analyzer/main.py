@@ -258,7 +258,6 @@ def analyze(
         chord_counts += Counter(chords)
 
     # TODO: SPの時は2P側のパターンは表示しない
-    # TODO: DPの時に1P,2Pを別々に集計するor2Pをフリップして1Pと合計する
     for chord in iidx.all_chord_patterns():
         count = chord_counts[chord]
         if show_all or count > 0:
