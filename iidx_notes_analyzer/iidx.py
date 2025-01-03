@@ -229,18 +229,41 @@ class Chord:
                 h |= 1 << i
         return h
 
-# 0個同時押しは含まない
-# TODO: 皿単体が含まれてない！
-def all_chord_patterns() -> Iterator[Chord]:
-    for play_side in all_play_sides():
+# 皿無し0個同時押しは含まない
+def all_chord_patterns(
+    play_side: PlaySide | None = None,
+    has_scratch: bool | None = None,
+    key_count: int | None = None,       # key_count個同時押しを対象にする
+) -> Iterator[Chord]:
+
+    if play_side is None:
+        for play_side in all_play_sides():
+            yield from all_chord_patterns(play_side, has_scratch, key_count)
+        return
+
+    if has_scratch is None:
         for has_scratch in [False, True]:
-            scratches: list[Lane] = [SCRATCH] if has_scratch else []
-            # 1個押し〜全押しまで、同時押しの数を順に上げていく
-            for key_count in range(1, KEY_COUNT + 1):
-                for key_pattern in combinations(all_keys(), key_count):
-                    keys: list[Lane] = list(key_pattern)
-                    lanes: list[Lane] = scratches + keys
-                    yield Chord(play_side, lanes)
+            yield from all_chord_patterns(play_side, has_scratch, key_count)
+        return
+
+    if key_count is None:
+        if has_scratch:
+            yield from all_chord_patterns(play_side, has_scratch, 0)
+        for key_count in range(1, KEY_COUNT + 1):
+            yield from all_chord_patterns(play_side, has_scratch, key_count)
+        return
+
+    if has_scratch:
+        assert key_count >= 0
+    else:
+        assert key_count >= 1
+    assert key_count <= KEY_COUNT
+
+    scratches: list[Lane] = [SCRATCH] if has_scratch else []
+    for key_pattern in combinations(all_keys(), key_count):
+        keys: list[Lane] = list(key_pattern)
+        lanes: list[Lane] = scratches + keys
+        yield Chord(play_side, lanes)
 
 def to_chords(notes: list[Note]) -> Iterator[Chord]:
     assert notes == sorted(notes)
