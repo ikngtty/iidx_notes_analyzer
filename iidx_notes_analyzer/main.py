@@ -1,5 +1,6 @@
 from collections import Counter
 from dataclasses import dataclass
+from typing import assert_never
 
 from . import iidx, persistence
 from .adapter import textage_scraper as textage
@@ -257,8 +258,15 @@ def analyze(
         chords = iidx.to_chords(notes)
         chord_counts += Counter(chords)
 
-    # TODO: SPの時は2P側のパターンは表示しない
-    for chord in iidx.all_chord_patterns():
+    match filter.play_mode:
+        case 'SP':
+            play_side = 1
+        case 'DP':
+            play_side = None
+        case _ as unreachable:
+            assert_never(unreachable)
+
+    for chord in iidx.all_chord_patterns(play_side):
         count = chord_counts[chord]
         if show_all or count > 0:
             chord_str = chord.show_lanes()
