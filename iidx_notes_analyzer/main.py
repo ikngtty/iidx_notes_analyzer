@@ -222,6 +222,7 @@ def parse_filter_to_analyze(
         level=parse_level_filter(level),
     )
 
+# TODO: 「n個同時押しはm個」みたいな集計もしたい
 def analyze(
     filter: FilterToAnalyze,
     show_all: bool = False,
