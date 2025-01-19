@@ -7,6 +7,9 @@ from .adapter import textage_scraper as textage
 from .util import util
 
 # TODO: シグナルを受け付けて穏便にキャンセル終了できる機能
+# TODO: scrape_scoreとanalyzeを統合したい。
+# 解析したい譜面のスクレイプが不足してても気付きにくいのが不丁寧なので、
+# analyze時に自動で足りない譜面をスクレイプする仕組みにしたい。
 
 HasURLFilter = persistence.HasURLFilter
 
