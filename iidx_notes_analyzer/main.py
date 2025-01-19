@@ -223,6 +223,7 @@ def parse_filter_to_analyze(
     )
 
 # TODO: 「n個同時押しはm個」みたいな集計もしたい
+# TODO: 個数ではなく割合で見れるパターンも欲しい
 def analyze(
     filter: FilterToAnalyze,
     show_all: bool = False,
