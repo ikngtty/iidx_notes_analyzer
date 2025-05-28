@@ -118,7 +118,12 @@ def parse_level_filter(s: str) -> LevelFilter:
 def scrape_music_list(overwrites: bool = False) -> None:
     with textage.Client() as scraper:
         page = scraper.scrape_music_list_page()
-        persistence.save_musics(page.musics, overwrites=overwrites)
+        try:
+            persistence.save_musics(page.musics, overwrites=overwrites)
+        except FileExistsError:
+            print('楽曲一覧は既に保存されています。')
+            print('上書きして良い場合、`--overwrite`オプションを指定してください。')
+            raise SystemExit(1)
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class FilterToScrape:
