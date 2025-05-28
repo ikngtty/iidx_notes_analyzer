@@ -1,8 +1,9 @@
+from contextlib import contextmanager
 import os
 import shutil
 import tempfile
 import time
-from typing import Any, Callable, TypeGuard
+from typing import Any, Callable, IO, Iterator, TypeGuard
 
 # TODO: `is_list_of_T`みたいにTを指定して使える汎用的な関数にしたい
 def is_list_of_list(l: list) -> TypeGuard[list[list]]:
@@ -17,8 +18,15 @@ def is_list_of_str_dict(l: list[dict]) -> TypeGuard[list[dict[str, Any]]]:
         for item in l
     )
 
-def write_file_safely(file_path: str, content: str) -> None:
-    # 一時ファイルを作成し、書き込みが終わったらリネームする。
+@contextmanager
+def make_file_atomically(file_path: str) -> Iterator[IO[str]]:
+    """
+    完全性が保証されたファイル書き込み。
+    書き込み中にエラーが起きた場合、ファイルの作成自体を取りやめるので、
+    中途半端なファイルが残ることがない。
+
+    具体的には、一時ファイルを作成して書き込み、無事完了したらリネームしている。
+    """
 
     file_name = os.path.basename(file_path)
 
@@ -33,7 +41,8 @@ def write_file_safely(file_path: str, content: str) -> None:
         prefix=temp_prefix, suffix=temp_suffix,
     ) as temp_file:
 
-        temp_file.write(content)
+        yield temp_file
+
         temp_file.flush()
         os.fsync(temp_file.fileno())
 

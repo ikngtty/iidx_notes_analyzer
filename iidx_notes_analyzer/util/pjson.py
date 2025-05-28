@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import json
-from typing import Any, Iterable, TextIO
+from typing import IO, Any, Iterable
 
 # 基本型以外（独自クラスとか）は対応していない。
 # TODO: バリデート
@@ -191,7 +191,7 @@ def _make_generator(config: _Config, obj: Any) -> _JSONChunksGenerator:
             return _JSONChunksGeneratorAtomic(config, obj)
 
 def dump(
-    obj: Any, fp: TextIO,
+    obj: Any, fp: IO[str],
     width: int = 80, indent: int = 2, ensure_ascii: bool = True,
 ) -> None:
 
