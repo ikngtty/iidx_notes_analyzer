@@ -1,3 +1,6 @@
+import os
+import shutil
+import tempfile
 import time
 from typing import Any, Callable, TypeGuard
 
@@ -13,6 +16,28 @@ def is_list_of_str_dict(l: list[dict]) -> TypeGuard[list[dict[str, Any]]]:
         all(isinstance(key, str) for key in item)
         for item in l
     )
+
+def write_file_safely(file_path: str, content: str) -> None:
+    # 一時ファイルを作成し、書き込みが終わったらリネームする。
+
+    file_name = os.path.basename(file_path)
+
+    temp_prefix = file_name + '.'
+    temp_suffix = '.tmp'
+
+    # 一時ファイルは本来の保存先と同じディレクトリにする。
+    temp_dir = os.path.dirname(file_path)
+
+    with tempfile.NamedTemporaryFile(
+        mode='w', dir=temp_dir, delete=True,
+        prefix=temp_prefix, suffix=temp_suffix,
+    ) as temp_file:
+
+        temp_file.write(content)
+        temp_file.flush()
+        os.fsync(temp_file.fileno())
+
+        shutil.move(temp_file.name, file_path)
 
 class CoolExecutor:
     wait_begun: Callable[[], None] | None

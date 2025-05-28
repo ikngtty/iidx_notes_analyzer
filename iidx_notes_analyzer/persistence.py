@@ -158,8 +158,9 @@ def save_musics(musics: list[iidx.Music], overwrites: bool = False):
         raise FileExistsError(_MUSICS_FILE_PATH)
 
     dict_musics = [music.as_dict() for music in musics]
-    with open(_MUSICS_FILE_PATH, 'w') as f:
-        pjson.dump(dict_musics, f, ensure_ascii=False)
+    # HACK: use `pjson.dump`
+    content = pjson.dumps(dict_musics, ensure_ascii=False)
+    util.write_file_safely(_MUSICS_FILE_PATH, content)
 
 def load_musics(filter: ScoreFilter) -> Iterator[tuple[iidx.Music, iidx.Score]]:
     with open(_MUSICS_FILE_PATH) as f:
@@ -219,8 +220,9 @@ def save_notes(
         raise FileExistsError(file_path)
 
     notes.sort()
-    with open(file_path, 'w') as f:
-        pjson.dump(notes, f)
+    # HACK: use `pjson.dump`
+    content = pjson.dumps(notes)
+    util.write_file_safely(file_path, content)
 
 def load_notes(
     music: iidx.Music, score: iidx.Score,
