@@ -2,6 +2,10 @@ import argparse
 
 from . import main
 
+# TODO: 一通りの異常系に対してユーザーフレンドリーなメッセージを出す。
+# てかどこまでが例外投げる側でどこからがハンドルする側なのか、
+# メッセージはどこで出すのかとかちゃんと決めたい。
+
 p = argparse.ArgumentParser(prog='iidx_notes_analyzer')
 
 p_sub = p.add_subparsers(
